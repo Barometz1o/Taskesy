@@ -105,11 +105,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../externals/ImGui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/VulkanSDK/1.4.304.1/Include;$(SolutionDir)/../externals/GLFW/include;$(SolutionDir)/../externals/ImGui;$(SolutionDir)/../externals/sources</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:/VulkanSDK/1.4.304.1/Lib;$(SolutionDir)/../externals/GLFW/lib-vc2022</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;Gdi32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -120,16 +122,36 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:/VulkanSDK/1.4.304.1/Include;$(SolutionDir)/../externals/GLFW/include;$(SolutionDir)/../externals/ImGui;$(SolutionDir)/../externals/sources</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:/VulkanSDK/1.4.304.1/Lib;$(SolutionDir)/../externals/GLFW/lib-vc2022</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;Gdi32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\externals\ImGui\imgui.cpp" />
+    <ClCompile Include="..\..\externals\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="..\..\externals\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="..\..\externals\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="..\..\externals\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="..\..\externals\sources\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\..\externals\sources\imgui_impl_vulkan.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\externals\ImGui\imconfig.h" />
+    <ClInclude Include="..\..\externals\ImGui\imgui.h" />
+    <ClInclude Include="..\..\externals\ImGui\imgui_internal.h" />
+    <ClInclude Include="..\..\externals\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="..\..\externals\ImGui\imstb_textedit.h" />
+    <ClInclude Include="..\..\externals\ImGui\imstb_truetype.h" />
+    <ClInclude Include="..\..\externals\sources\imgui_impl_glfw.h" />
+    <ClInclude Include="..\..\externals\sources\imgui_impl_vulkan.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

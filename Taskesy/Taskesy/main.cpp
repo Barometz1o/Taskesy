@@ -357,7 +357,7 @@ int main(int, char**)
 
     // Create window with Vulkan context
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+Vulkan example", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "Taskesy", nullptr, nullptr);
     if (!glfwVulkanSupported())
     {
         printf("GLFW: Vulkan Not Supported\n");
@@ -510,6 +510,28 @@ int main(int, char**)
                 show_another_window = false;
             ImGui::End();
         }
+
+        
+        ImGui::SetNextWindowPos(ImVec2(10, 20));
+        ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+        
+        ImGui::Begin("MainWindow", nullptr,
+            ImGuiWindowFlags_NoTitleBar |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoCollapse |
+            ImGuiWindowFlags_NoBringToFrontOnFocus |
+            ImGuiWindowFlags_NoNavFocus |
+            ImGuiWindowFlags_NoBackground); // opcional, para hacerlo transparente
+
+        // To draw on main
+        ImGui::Text("Taskesy");
+        ImGui::Text("Columns:"/*, Column*/);
+        if (ImGui::BeginTable("Grid", 5)) {
+            ImGui::EndTable();
+        }
+
+        ImGui::End();
 
         // Rendering
         ImGui::Render();

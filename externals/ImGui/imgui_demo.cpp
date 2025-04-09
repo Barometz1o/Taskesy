@@ -228,6 +228,9 @@ Index of this file:
 // [SECTION] Forward Declarations
 //-----------------------------------------------------------------------------
 
+// Taskesy
+size_t Column = 0;
+
 #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
 
 // Forward Declarations
@@ -8805,6 +8808,46 @@ static void ShowExampleAppMainMenuBar()
             ImGui::EndMenu();
         }
         */
+        /*
+        if (ImGui::BeginMenu("Add Row"))
+        {
+            Row++;
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Delete Row"))
+        {
+            Row--;
+            ImGui::EndMenu();
+        }
+        
+        if (ImGui::BeginMenu("Add Column"))
+        {
+            Column++;
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Delete Column"))
+        {
+            Column--;
+            ImGui::EndMenu();
+        }
+        */
+        if (ImGui::Button("Add Column")) { Column++; }
+
+        // Not here the windows
+        if (ImGui::Button("Delete Column")) {
+            if (Column >= 1)
+                Column--; 
+            else
+            {
+                ImGui::Begin("Error!");
+                ImGui::Text("You need to have at least one Column!");
+                ImGui::End();
+            }
+            ImGui::Begin("Columns");
+            ImGui::Text("Number of Columns: ", Column);
+            ImGui::End();
+        }
+
         if (ImGui::BeginMenu("Performance"))
         {
             ImGuiIO& io = ImGui::GetIO(); (void)io;

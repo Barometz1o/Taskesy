@@ -16,11 +16,15 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_vulkan.h"
+#include <iostream>
 #include <stdio.h>          // printf, fprintf
 #include <stdlib.h>         // abort
 #define GLFW_INCLUDE_NONE
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 // Volk headers
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
@@ -348,6 +352,25 @@ static void FramePresent(ImGui_ImplVulkanH_Window* wd)
     wd->SemaphoreIndex = (wd->SemaphoreIndex + 1) % wd->SemaphoreCount; // Now we can use the next set of semaphores
 }
 
+// Set Up Icon on Main Window
+void setWindowIcon(GLFWwindow* window, const char* iconPath) {
+    int width, height, channels;
+    unsigned char* data = stbi_load(iconPath, &width, &height, &channels, 4);
+
+    if (data) {
+        GLFWimage images[1];
+        images[0].width = width;
+        images[0].height = height;
+        images[0].pixels = data;
+
+        glfwSetWindowIcon(window, 1, images);
+        stbi_image_free(data);
+    }
+    else {
+        std::cerr << "Error loading icon image." << std::endl;
+    }
+}
+
 // Main code
 int main(int, char**)
 {
@@ -437,6 +460,9 @@ int main(int, char**)
     // Taskesy Colour
     ImVec4 clear_color = ImVec4(0.28f, 0.13f, 0.13f, 1.00f);
 
+    // Set Up Icon
+    setWindowIcon(window, "../../resources/icon/taskesy_icon.png");
+
     // Main loop
     while (!glfwWindowShouldClose(window))
     {
@@ -524,7 +550,7 @@ int main(int, char**)
             ImGuiWindowFlags_NoCollapse |
             ImGuiWindowFlags_NoBringToFrontOnFocus |
             ImGuiWindowFlags_NoNavFocus /* |
-            ImGuiWindowFlags_NoBackground*/ ); // opcional, para hacerlo transparente
+            ImGuiWindowFlags_NoBackground*/ ); // optional, make it transparent
 
         // To draw on main
         ImGui::Text("Taskesy");
@@ -536,8 +562,6 @@ int main(int, char**)
         
 
         ImGui::End();
-
-        // Set Up Icon
 
         // Rendering
         ImGui::Render();

@@ -152,6 +152,11 @@
     <ClInclude Include="..\..\externals\ImGui\imstb_truetype.h" />
     <ClInclude Include="..\..\externals\sources\imgui_impl_glfw.h" />
     <ClInclude Include="..\..\externals\sources\imgui_impl_vulkan.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

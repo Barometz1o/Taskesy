@@ -512,26 +512,32 @@ int main(int, char**)
         }
 
         
-        ImGui::SetNextWindowPos(ImVec2(10, 20));
-        ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
-        
+        ImGui::SetNextWindowPos(ImVec2(10, 10));
+        float x_coord = ImGui::GetIO().DisplaySize.x;
+        float y_coord = ImGui::GetIO().DisplaySize.y;
+        ImGui::SetNextWindowSize(ImVec2(x_coord - 20, y_coord - 20));
+
         ImGui::Begin("MainWindow", nullptr,
             ImGuiWindowFlags_NoTitleBar |
             ImGuiWindowFlags_NoResize |
             ImGuiWindowFlags_NoMove |
             ImGuiWindowFlags_NoCollapse |
             ImGuiWindowFlags_NoBringToFrontOnFocus |
-            ImGuiWindowFlags_NoNavFocus |
-            ImGuiWindowFlags_NoBackground); // opcional, para hacerlo transparente
+            ImGuiWindowFlags_NoNavFocus /* |
+            ImGuiWindowFlags_NoBackground*/ ); // opcional, para hacerlo transparente
 
         // To draw on main
         ImGui::Text("Taskesy");
+        
         ImGui::Text("Columns:"/*, Column*/);
         if (ImGui::BeginTable("Grid", 5)) {
             ImGui::EndTable();
         }
+        
 
         ImGui::End();
+
+        // Set Up Icon
 
         // Rendering
         ImGui::Render();

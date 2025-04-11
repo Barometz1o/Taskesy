@@ -230,6 +230,10 @@ Index of this file:
 
 #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
 
+//Taskesy
+size_t taskesyColumns = 1;
+size_t taskesyRows = 1;
+
 // Forward Declarations
 struct ImGuiDemoWindowData;
 static void ShowExampleAppMainMenuBar();
@@ -338,87 +342,131 @@ void ImGui::ShowTaskesyWindow(bool* p_open)
     // Verify ABI compatibility between caller code and compiled version of Dear ImGui. This helps detects some build issues.
     IMGUI_CHECKVERSION();
 
-    // Stored data
-    static ImGuiDemoWindowData demo_data;
+    // Window Pos
+    ImGui::SetNextWindowPos(ImVec2(10, 30));
+    float x_coord = ImGui::GetIO().DisplaySize.x;
+    float y_coord = ImGui::GetIO().DisplaySize.y;
+    ImGui::SetNextWindowSize(ImVec2(x_coord - 20, y_coord - 40));
 
-    // Examples Apps (accessible from the "Examples" menu)
-    if (demo_data.ShowMainMenuBar) { ShowExampleAppMainMenuBar(); }
-    if (demo_data.ShowAppDocuments) { ShowExampleAppDocuments(&demo_data.ShowAppDocuments); }
-    if (demo_data.ShowAppAssetsBrowser) { ShowExampleAppAssetsBrowser(&demo_data.ShowAppAssetsBrowser); }
-    if (demo_data.ShowAppConsole) { ShowExampleAppConsole(&demo_data.ShowAppConsole); }
-    if (demo_data.ShowAppCustomRendering) { ShowExampleAppCustomRendering(&demo_data.ShowAppCustomRendering); }
-    if (demo_data.ShowAppLog) { ShowExampleAppLog(&demo_data.ShowAppLog); }
-    if (demo_data.ShowAppLayout) { ShowExampleAppLayout(&demo_data.ShowAppLayout); }
-    if (demo_data.ShowAppPropertyEditor) { ShowExampleAppPropertyEditor(&demo_data.ShowAppPropertyEditor, &demo_data); }
-    if (demo_data.ShowAppSimpleOverlay) { ShowExampleAppSimpleOverlay(&demo_data.ShowAppSimpleOverlay); }
-    if (demo_data.ShowAppAutoResize) { ShowExampleAppAutoResize(&demo_data.ShowAppAutoResize); }
-    if (demo_data.ShowAppConstrainedResize) { ShowExampleAppConstrainedResize(&demo_data.ShowAppConstrainedResize); }
-    if (demo_data.ShowAppFullscreen) { ShowExampleAppFullscreen(&demo_data.ShowAppFullscreen); }
-    if (demo_data.ShowAppLongText) { ShowExampleAppLongText(&demo_data.ShowAppLongText); }
-    if (demo_data.ShowAppWindowTitles) { ShowExampleAppWindowTitles(&demo_data.ShowAppWindowTitles); }
+    ImGui::Begin("MainWindow", nullptr,
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoBringToFrontOnFocus |
+        ImGuiWindowFlags_NoNavFocus /* |
+        ImGuiWindowFlags_NoBackground*/); // optional, make it transparent
 
-    // Dear ImGui Tools (accessible from the "Tools" menu)
-    if (demo_data.ShowMetrics) { ImGui::ShowMetricsWindow(&demo_data.ShowMetrics); }
-    if (demo_data.ShowDebugLog) { ImGui::ShowDebugLogWindow(&demo_data.ShowDebugLog); }
-    if (demo_data.ShowIDStackTool) { ImGui::ShowIDStackToolWindow(&demo_data.ShowIDStackTool); }
-    if (demo_data.ShowAbout) { ImGui::ShowAboutWindow(&demo_data.ShowAbout); }
-    if (demo_data.ShowStyleEditor)
+    // Menu bar
+    ShowExampleAppMainMenuBar();
+
+    // Before drawing
+    int boxSizeX = x_coord / (taskesyColumns + 0.19);
+    int boxSizeY = y_coord / (taskesyRows + 0.19f);
+
+    // To draw on main
+    //ImGui::Text("Taskesy");
+
+    enum Mode
     {
-        ImGui::Begin("Dear ImGui Style Editor", &demo_data.ShowStyleEditor);
-        ImGui::ShowStyleEditor();
-        ImGui::End();
+        Mode_Swap,
+        Mode_Move,
+        Mode_Copy
+    };
+    static int mode = 0;
+
+    if (ImGui::RadioButton("Swap", mode == Mode_Swap)) { mode = Mode_Swap; } ImGui::SameLine();
+    if (ImGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } ImGui::SameLine();
+    if (ImGui::RadioButton("Copy", mode == Mode_Copy)) { mode = Mode_Copy; }
+
+    static const char* names[9] =
+    {
+        "Bobby", "Beatrice", "Betty",
+        "Brianna", "Barry", "Bernard",
+        "Bibi", "Blaine", "Bryn"
+    };
+
+
+    // Make the UI compact because there are so many fields
+    // In my case does not work due to the rendering window.
+
+    // Flags to create the table
+    static ImGuiTableFlags flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV;
+
+    // Create Tables/Reorderable, hideable, with headers
+    if (ImGui::BeginTable("table1", taskesyColumns, flags))
+    {
+        // Submit columns name with TableSetupColumn() and call TableHeadersRow() to create a row with a header in each column.
+        // (Later we will show how TableSetupColumn() has other uses, optional flags, sizing weight etc.)
+        for (size_t col = 0; col < taskesyColumns; ++col)
+        {
+            ImGui::TableSetupColumn("One");
+            //ImGui::TableSetupColumn("One");
+            //ImGui::TableSetupColumn("Two");
+            //ImGui::TableSetupColumn("Three");
+        }
+
+        //ImGui::TableHeadersRow();
+        //for (int row = 0; row < taskesyRows; row++)
+        //{
+            ImGui::TableNextRow();
+            for (int column = 0; column < taskesyColumns; column++)
+            {
+                ImGui::TableSetColumnIndex(column);
+                ImGui::Text("Hello %d", column/*, row */ );
+            }
+            for (int n = 0; n < IM_ARRAYSIZE(names); n++)
+            {
+                ImGui::PushID(n);
+                if ((n % taskesyColumns) != 0)
+                    ImGui::SameLine();
+
+                ImGui::Text("Column: ", n);
+                ImGui::Button(names[n], ImVec2(boxSizeX, boxSizeY));
+
+                // Our buttons are both drag sources and drag targets here!
+                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+                {
+                    // Set payload to carry the index of our item (could be anything)
+                    ImGui::SetDragDropPayload("DND_DEMO_CELL", &n, sizeof(int));
+
+                    // Display preview (could be anything, e.g. when dragging an image we could decide to display
+                    // the filename and a small preview of the image, etc.)
+                    if (mode == Mode_Copy) { ImGui::Text("Copy %s", names[n]); }
+                    if (mode == Mode_Move) { ImGui::Text("Move %s", names[n]); }
+                    if (mode == Mode_Swap) { ImGui::Text("Swap %s", names[n]); }
+                    ImGui::EndDragDropSource();
+                }
+                if (ImGui::BeginDragDropTarget())
+                {
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
+                    {
+                        IM_ASSERT(payload->DataSize == sizeof(int));
+                        int payload_n = *(const int*)payload->Data;
+                        if (mode == Mode_Copy)
+                        {
+                            names[n] = names[payload_n];
+                        }
+                        if (mode == Mode_Move)
+                        {
+                            names[n] = names[payload_n];
+                            names[payload_n] = "";
+                        }
+                        if (mode == Mode_Swap)
+                        {
+                            const char* tmp = names[n];
+                            names[n] = names[payload_n];
+                            names[payload_n] = tmp;
+                        }
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+                ImGui::PopID();
+            }
+        //}
+        ImGui::EndTable();
     }
 
-    // Demonstrate the various window flags. Typically you would just use the default!
-    static bool no_titlebar = false;
-    static bool no_scrollbar = false;
-    static bool no_menu = false;
-    static bool no_move = false;
-    static bool no_resize = false;
-    static bool no_collapse = false;
-    static bool no_close = true;
-    static bool no_nav = false;
-    static bool no_background = false;
-    static bool no_bring_to_front = false;
-    static bool unsaved_document = false;
-
-    ImGuiWindowFlags window_flags = 0;
-    if (no_titlebar)        window_flags |= ImGuiWindowFlags_NoTitleBar;
-    if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
-    if (!no_menu)           window_flags |= ImGuiWindowFlags_MenuBar;
-    if (no_move)            window_flags |= ImGuiWindowFlags_NoMove;
-    if (no_resize)          window_flags |= ImGuiWindowFlags_NoResize;
-    if (no_collapse)        window_flags |= ImGuiWindowFlags_NoCollapse;
-    if (no_nav)             window_flags |= ImGuiWindowFlags_NoNav;
-    if (no_background)      window_flags |= ImGuiWindowFlags_NoBackground;
-    if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
-    if (unsaved_document)   window_flags |= ImGuiWindowFlags_UnsavedDocument;
-    if (no_close)           p_open = NULL; // Don't pass our bool* to Begin
-
-
-    // We specify a default position/size in case there's no data in the .ini file.
-    // We only do it to make the demo applications a little more welcoming, but typically this isn't required.
-    const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 650, main_viewport->WorkPos.y + 20), ImGuiCond_FirstUseEver);
-    //ImGui::SetNextWindowSize(ImVec2(550, 680), ImGuiCond_FirstUseEver);
-
-    // Main body of the Demo window starts here.
-    if (!ImGui::Begin("Dear ImGui Demo", p_open, window_flags))
-    {
-        // Early out if the window is collapsed, as an optimization.
-        ImGui::End();
-        return;
-    }
-
-    // Most "big" widgets share a common width settings by default. See 'Demo->Layout->Widgets Width' for details.
-    ImGui::PushItemWidth(ImGui::GetFontSize() * -12);           // e.g. Leave a fixed amount of width for labels (by passing a negative value), the rest goes to widgets.
-    ImGui::PushItemWidth(-ImGui::GetWindowWidth() * 0.35f);   // e.g. Use 2/3 of the space for widgets and 1/3 for labels (right align)
-
-    // Menu Bar
-    //DemoWindowMenuBar(&demo_data);
-
-    // End of ShowDemoWindow()
-    ImGui::PopItemWidth();
     ImGui::End();
 }
 
@@ -497,8 +545,8 @@ void ImGui::ShowDemoWindow(bool* p_open)
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 650, main_viewport->WorkPos.y + 20), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(550, 680), ImGuiCond_FirstUseEver);
 
-    // Main body of the Demo window starts here.
-    if (!ImGui::Begin("Dear ImGui Demo", p_open, window_flags))
+    // Main body of the Taskesy window starts here.
+    if (!ImGui::Begin("Taskesy", p_open, window_flags))
     {
         // Early out if the window is collapsed, as an optimization.
         ImGui::End();
@@ -8617,22 +8665,18 @@ static void ShowExampleAppMainMenuBar()
             ImGui::EndMenu();
         }
         */
-        size_t Column = 0;
-        if (ImGui::Button("Add Column")) { Column++; }
 
-        // Not here the windows
+        // Add columns
+        if (ImGui::Button("Add Column")) { taskesyColumns++; }
         if (ImGui::Button("Delete Column")) {
-            if (Column >= 1)
-                Column--; 
-            else
-            {
-                ImGui::Begin("Error!");
-                ImGui::Text("You need to have at least one Column!");
-                ImGui::End();
-            }
-            ImGui::Begin("Columns");
-            ImGui::Text("Number of Columns: ", Column);
-            ImGui::End();
+            if (taskesyColumns > 1)
+                taskesyColumns--;
+        }
+        // Add rows
+        if (ImGui::Button("Add Row")) { taskesyRows++; }
+        if (ImGui::Button("Delete Row")) {
+            if (taskesyRows > 1)
+                taskesyRows--;
         }
 
         if (ImGui::BeginMenu("Performance"))

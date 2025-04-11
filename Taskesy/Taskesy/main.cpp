@@ -44,6 +44,8 @@
 #define APP_USE_VULKAN_DEBUG_REPORT
 #endif
 
+using namespace std;
+
 // Data
 static VkAllocationCallbacks* g_Allocator = nullptr;
 static VkInstance               g_Instance = VK_NULL_HANDLE;
@@ -552,13 +554,153 @@ int main(int, char**)
             ImGuiWindowFlags_NoNavFocus /* |
             ImGuiWindowFlags_NoBackground*/ ); // optional, make it transparent
 
+        // Before drawing
+        int numColumns = 9;
+        int numRows = 9;
+
+        int boxSizeX = x_coord / (numColumns + 0.19);
+        int boxSizeY = y_coord / (numColumns + 0.19);
+
         // To draw on main
-        ImGui::Text("Taskesy");
+        //ImGui::Text("Taskesy");
+
+        enum Mode
+        {
+            Mode_Swap,
+            Mode_Move,
+            Mode_Copy
+        };
+        static int mode = 0;
         
-        ImGui::Text("Columns:"/*, Column*/);
-        if (ImGui::BeginTable("Grid", 5)) {
+        if (ImGui::RadioButton("Swap", mode == Mode_Swap)) { mode = Mode_Swap; } ImGui::SameLine();
+        if (ImGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } ImGui::SameLine();
+        if (ImGui::RadioButton("Copy", mode == Mode_Copy)) { mode = Mode_Copy; }
+
+        static const char* names[9] =
+        {
+            "Bobby", "Beatrice", "Betty",
+            "Brianna", "Barry", "Bernard",
+            "Bibi", "Blaine", "Bryn"
+        };
+
+        
+        // Make the UI compact because there are so many fields
+        // In my case does not work due to the rendering window.
+
+        // Flags to create the table
+        static ImGuiTableFlags flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV;
+
+        // Create Tables/Reorderable, hideable, with headers
+        if (ImGui::BeginTable("table1", 3, flags))
+        {
+            // Submit columns name with TableSetupColumn() and call TableHeadersRow() to create a row with a header in each column.
+            // (Later we will show how TableSetupColumn() has other uses, optional flags, sizing weight etc.)
+            ImGui::TableSetupColumn("One");
+            ImGui::TableSetupColumn("Two");
+            ImGui::TableSetupColumn("Three");
+            ImGui::TableHeadersRow();
+            for (int row = 0; row < 6; row++)
+            {
+                ImGui::TableNextRow();
+                for (int column = 0; column < 3; column++)
+                {
+                    ImGui::TableSetColumnIndex(column);
+                    ImGui::Text("Hello %d,%d", column, row);
+                }
+            }
             ImGui::EndTable();
         }
+
+        /*
+        // Title table
+        if (ImGui::BeginTable("table1", numColumns, flags))
+        {
+            for (int row = 0; row < 1; row++)
+            {
+                ImGui::TableNextRow();
+                if (row == 0) ImGui::Text("Column", row);
+                for (int column = 0; column < numColumns; column++)
+                {
+                    ImGui::TableSetColumnIndex(column);
+                    ImGui::Text("Column %d", column);
+                }
+            }
+            ImGui::EndTable();
+        }
+
+        // Box table
+        if (ImGui::BeginTable("table2", numColumns, flags))
+        {
+            for (int row = 0; row < 5; row++)
+            {
+                ImGui::TableNextRow();
+                if (row == 0) ImGui::Text("Column", row);
+                for (int column = 0; column < numColumns; column++)
+                {
+                    ImGui::TableSetColumnIndex(column);
+                    ImGui::Text("Hello %d,%d", column, row);
+                }
+            }
+            ImGui::EndTable();
+        }
+        */
+        /*
+        for (int cols = 0; cols < 2; cols++)
+        {
+            for (int n = 0; n < IM_ARRAYSIZE(names); n++)
+            {
+                ImGui::PushID(n);
+                if ((n % numColumns) != 0)
+                    ImGui::SameLine();
+
+                ImGui::Text("Column: ", n);
+                ImGui::Button(names[n], ImVec2(boxSizeX, boxSizeY));
+
+                // Our buttons are both drag sources and drag targets here!
+                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+                {
+                    // Set payload to carry the index of our item (could be anything)
+                    ImGui::SetDragDropPayload("DND_DEMO_CELL", &n, sizeof(int));
+
+                    // Display preview (could be anything, e.g. when dragging an image we could decide to display
+                    // the filename and a small preview of the image, etc.)
+                    if (mode == Mode_Copy) { ImGui::Text("Copy %s", names[n]); }
+                    if (mode == Mode_Move) { ImGui::Text("Move %s", names[n]); }
+                    if (mode == Mode_Swap) { ImGui::Text("Swap %s", names[n]); }
+                    ImGui::EndDragDropSource();
+                }
+                if (ImGui::BeginDragDropTarget())
+                {
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
+                    {
+                        IM_ASSERT(payload->DataSize == sizeof(int));
+                        int payload_n = *(const int*)payload->Data;
+                        if (mode == Mode_Copy)
+                        {
+                            names[n] = names[payload_n];
+                        }
+                        if (mode == Mode_Move)
+                        {
+                            names[n] = names[payload_n];
+                            names[payload_n] = "";
+                        }
+                        if (mode == Mode_Swap)
+                        {
+                            const char* tmp = names[n];
+                            names[n] = names[payload_n];
+                            names[payload_n] = tmp;
+                        }
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+                ImGui::PopID();
+            }
+        }
+        */
+        //ImGui::Text("Columns:"/*, Column*/);
+        //if (ImGui::BeginTable("Grid", 5)) {
+        //    ImGui::EndTable();
+        //}
         
 
         ImGui::End();

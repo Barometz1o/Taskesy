@@ -228,9 +228,6 @@ Index of this file:
 // [SECTION] Forward Declarations
 //-----------------------------------------------------------------------------
 
-// Taskesy
-size_t Column = 0;
-
 #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
 
 // Forward Declarations
@@ -8831,6 +8828,7 @@ static void ShowExampleAppMainMenuBar()
             ImGui::EndMenu();
         }
         */
+        size_t Column = 0;
         if (ImGui::Button("Add Column")) { Column++; }
 
         // Not here the windows

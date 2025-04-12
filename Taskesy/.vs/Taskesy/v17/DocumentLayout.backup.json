@@ -10,10 +10,13 @@
       "RelativeMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|solutionrelative:Taskesy\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\externals\\ImGui\\imgui.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\externals\\ImGui\\imgui_widgets.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\externals\\ImGui\\imgui_widgets.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\externals\\ImGui\\imgui_tables.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\externals\\ImGui\\imgui.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -23,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -36,6 +39,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "imgui_tables.cpp",
+              "DocumentMoniker": "E:\\WORKING\\Taskesy\\externals\\ImGui\\imgui_tables.cpp",
+              "RelativeDocumentMoniker": "..\\externals\\ImGui\\imgui_tables.cpp",
+              "ToolTip": "E:\\WORKING\\Taskesy\\externals\\ImGui\\imgui_tables.cpp",
+              "RelativeToolTip": "..\\externals\\ImGui\\imgui_tables.cpp",
+              "ViewState": "AgIAADYGAAAAAAAAAAAAAEUGAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-04-12T08:40:44.261Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "imgui_widgets.cpp",
               "DocumentMoniker": "E:\\WORKING\\Taskesy\\externals\\ImGui\\imgui_widgets.cpp",
               "RelativeDocumentMoniker": "..\\externals\\ImGui\\imgui_widgets.cpp",
@@ -48,7 +64,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "imgui.h",
               "DocumentMoniker": "E:\\WORKING\\Taskesy\\externals\\ImGui\\imgui.h",
               "RelativeDocumentMoniker": "..\\externals\\ImGui\\imgui.h",
@@ -67,7 +83,7 @@
               "RelativeDocumentMoniker": "Taskesy\\main.cpp",
               "ToolTip": "E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\main.cpp",
               "RelativeToolTip": "Taskesy\\main.cpp",
-              "ViewState": "AgIAAM4BAAAAAAAAAAAAANQBAAAoAAAAAAAAAA==",
+              "ViewState": "AgIAANQBAAAAAAAAAAAAANcBAAB9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-03-19T21:08:17.153Z",
               "EditorCaption": ""
@@ -80,7 +96,7 @@
               "RelativeDocumentMoniker": "..\\externals\\ImGui\\imgui_demo.cpp",
               "ToolTip": "E:\\WORKING\\Taskesy\\externals\\ImGui\\imgui_demo.cpp",
               "RelativeToolTip": "..\\externals\\ImGui\\imgui_demo.cpp",
-              "ViewState": "AgIAAA4CAAAAAAAAAAAAACQCAAAeAAAAAAAAAA==",
+              "ViewState": "AgIAABQBAAAAAAAAAAAAAOoAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-04-08T09:37:33.661Z",
               "EditorCaption": ""

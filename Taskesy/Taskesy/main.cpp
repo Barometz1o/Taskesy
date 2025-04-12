@@ -456,7 +456,7 @@ int main(int, char**)
 
     // Our state
     bool show_taskesy_window = true;
-    bool show_demo_window = false;
+    bool show_demo_window = true;
     bool show_another_window = false;
 
     // Taskesy Colour

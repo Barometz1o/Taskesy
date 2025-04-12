@@ -232,7 +232,7 @@ Index of this file:
 
 //Taskesy
 size_t taskesyColumns = 1;
-size_t taskesyRows = 1;
+size_t taskesyRows = 16;
 
 // Forward Declarations
 struct ImGuiDemoWindowData;
@@ -406,15 +406,15 @@ void ImGui::ShowTaskesyWindow(bool* p_open)
             //ImGui::TableSetupColumn("Three");
         }
 
-        //ImGui::TableHeadersRow();
+        ImGui::TableHeadersRow();
         //for (int row = 0; row < taskesyRows; row++)
         //{
-            ImGui::TableNextRow();
-            for (int column = 0; column < taskesyColumns; column++)
-            {
-                ImGui::TableSetColumnIndex(column);
-                ImGui::Text("Hello %d", column/*, row */ );
-            }
+        ImGui::TableNextRow();
+        for (int column = 0; column < taskesyColumns; column++)
+        {
+            ImGui::TableSetColumnIndex(column);
+            ImGui::Text("Hello %d", column/*, row */);
+
             for (int n = 0; n < IM_ARRAYSIZE(names); n++)
             {
                 ImGui::PushID(n);
@@ -463,6 +463,7 @@ void ImGui::ShowTaskesyWindow(bool* p_open)
                 }
                 ImGui::PopID();
             }
+        }
         //}
         ImGui::EndTable();
     }

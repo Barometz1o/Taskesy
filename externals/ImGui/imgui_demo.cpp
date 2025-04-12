@@ -136,6 +136,7 @@ Index of this file:
 #include <stdio.h>          // vsnprintf, sscanf, printf
 #include <stdlib.h>         // NULL, malloc, free, atoi
 #include <stdint.h>         // intptr_t
+#include <vector>
 #if !defined(_MSC_VER) || _MSC_VER >= 1800
 #include <inttypes.h>       // PRId64/PRIu64, not avail in some MinGW headers.
 #endif
@@ -233,6 +234,9 @@ Index of this file:
 //Taskesy
 size_t taskesyColumns = 1;
 size_t taskesyRows = 16;
+size_t ID;
+std::vector<bool> showColumn;               // Initializing false
+std::vector<size_t> numberColumn;           // Counting filled boxes per column
 
 // Forward Declarations
 struct ImGuiDemoWindowData;
@@ -364,9 +368,17 @@ void ImGui::ShowTaskesyWindow(bool* p_open)
     int boxSizeX = x_coord / (taskesyColumns + 0.19);
     int boxSizeY = y_coord / (taskesyRows + 0.19f);
 
+    // Resize bool column vector
+    showColumn.resize(taskesyColumns);
+
+    // Resize boxes per column vector
+    numberColumn.resize(taskesyColumns, 0);
+
+
     // To draw on main
     //ImGui::Text("Taskesy");
 
+    // Display box mode (swap, move and copy)
     enum Mode
     {
         Mode_Swap,
@@ -379,13 +391,33 @@ void ImGui::ShowTaskesyWindow(bool* p_open)
     if (ImGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } ImGui::SameLine();
     if (ImGui::RadioButton("Copy", mode == Mode_Copy)) { mode = Mode_Copy; }
 
+    // Fill the grid with empty boxes
+    std::vector<const char*> text;
+    for (size_t row = 0; row < taskesyRows; ++row)
+    {
+        for (size_t col = 0; col < taskesyColumns; ++col)
+        {
+            text.push_back("No Text");
+        }
+    }
+
+    /*
+    text.push_back("Beatrice");
+    text.push_back("Betty");
+    text.push_back("Brianna");
+    text.push_back("Barry");
+    text.push_back("Bernard");
+    text.push_back("Bibi");
+    text.push_back("Blaine");
+    text.push_back("Bryn");
+    
     static const char* names[9] =
     {
         "Bobby", "Beatrice", "Betty",
         "Brianna", "Barry", "Bernard",
         "Bibi", "Blaine", "Bryn"
     };
-
+    */
 
     // Make the UI compact because there are so many fields
     // In my case does not work due to the rendering window.
@@ -409,59 +441,68 @@ void ImGui::ShowTaskesyWindow(bool* p_open)
         ImGui::TableHeadersRow();
         //for (int row = 0; row < taskesyRows; row++)
         //{
+
+        ID = 0;
+
         ImGui::TableNextRow();
         for (int column = 0; column < taskesyColumns; column++)
         {
             ImGui::TableSetColumnIndex(column);
             ImGui::Text("Hello %d", column/*, row */);
 
-            for (int n = 0; n < IM_ARRAYSIZE(names); n++)
+            for (int n = 0; n < taskesyRows; n++)
             {
-                ImGui::PushID(n);
-                if ((n % taskesyColumns) != 0)
-                    ImGui::SameLine();
-
-                ImGui::Text("Column: ", n);
-                ImGui::Button(names[n], ImVec2(boxSizeX, boxSizeY));
-
-                // Our buttons are both drag sources and drag targets here!
-                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+                if (text[n] == "No Text" && showColumn[column] == true && n == numberColumn[column])
                 {
-                    // Set payload to carry the index of our item (could be anything)
-                    ImGui::SetDragDropPayload("DND_DEMO_CELL", &n, sizeof(int));
 
-                    // Display preview (could be anything, e.g. when dragging an image we could decide to display
-                    // the filename and a small preview of the image, etc.)
-                    if (mode == Mode_Copy) { ImGui::Text("Copy %s", names[n]); }
-                    if (mode == Mode_Move) { ImGui::Text("Move %s", names[n]); }
-                    if (mode == Mode_Swap) { ImGui::Text("Swap %s", names[n]); }
-                    ImGui::EndDragDropSource();
-                }
-                if (ImGui::BeginDragDropTarget())
-                {
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
+                    // To change when modifying the box
+                    //showColumn[column] = false;
+                    //numberColumn[column] += 1;
+
+                    ImGui::PushID(ID);
+                    ID++;
+
+                    ImGui::Button(text[n], ImVec2(boxSizeX, boxSizeY));
+
+                    // Our buttons are both drag sources and drag targets here!
+                    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
                     {
-                        IM_ASSERT(payload->DataSize == sizeof(int));
-                        int payload_n = *(const int*)payload->Data;
-                        if (mode == Mode_Copy)
-                        {
-                            names[n] = names[payload_n];
-                        }
-                        if (mode == Mode_Move)
-                        {
-                            names[n] = names[payload_n];
-                            names[payload_n] = "";
-                        }
-                        if (mode == Mode_Swap)
-                        {
-                            const char* tmp = names[n];
-                            names[n] = names[payload_n];
-                            names[payload_n] = tmp;
-                        }
+                        // Set payload to carry the index of our item (could be anything)
+                        ImGui::SetDragDropPayload("DND_DEMO_CELL", &n, sizeof(int));
+
+                        // Display preview (could be anything, e.g. when dragging an image we could decide to display
+                        // the filename and a small preview of the image, etc.)
+                        if (mode == Mode_Copy) { ImGui::Text("Copy %s", text[n]); }
+                        if (mode == Mode_Move) { ImGui::Text("Move %s", text[n]); }
+                        if (mode == Mode_Swap) { ImGui::Text("Swap %s", text[n]); }
+                        ImGui::EndDragDropSource();
                     }
-                    ImGui::EndDragDropTarget();
+                    if (ImGui::BeginDragDropTarget())
+                    {
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
+                        {
+                            IM_ASSERT(payload->DataSize == sizeof(int));
+                            int payload_n = *(const int*)payload->Data;
+                            if (mode == Mode_Copy)
+                            {
+                                text[n] = text[payload_n];
+                            }
+                            if (mode == Mode_Move)
+                            {
+                                text[n] = text[payload_n];
+                                text[payload_n] = "";
+                            }
+                            if (mode == Mode_Swap)
+                            {
+                                const char* tmp = text[n];
+                                text[n] = text[payload_n];
+                                text[payload_n] = tmp;
+                            }
+                        }
+                        ImGui::EndDragDropTarget();
+                    }
+                    ImGui::PopID();
                 }
-                ImGui::PopID();
             }
         }
         //}
@@ -8667,17 +8708,33 @@ static void ShowExampleAppMainMenuBar()
         }
         */
 
-        // Add columns
-        if (ImGui::Button("Add Column")) { taskesyColumns++; }
-        if (ImGui::Button("Delete Column")) {
-            if (taskesyColumns > 1)
-                taskesyColumns--;
-        }
-        // Add rows
-        if (ImGui::Button("Add Row")) { taskesyRows++; }
-        if (ImGui::Button("Delete Row")) {
-            if (taskesyRows > 1)
-                taskesyRows--;
+        if (ImGui::BeginMenu("Add"))
+        {
+            // Add columns
+            if (ImGui::MenuItem("Add Column")) { taskesyColumns++; }
+            if (ImGui::MenuItem("Delete Column")) {
+                if (taskesyColumns > 1)
+                    taskesyColumns--;
+            }
+            ImGui::Separator();
+            // Add rows
+            if (ImGui::MenuItem("Add Row")) { taskesyRows++; }
+            if (ImGui::MenuItem("Delete Row")) {
+                if (taskesyRows > 1)
+                    taskesyRows--;
+            }
+            ImGui::Separator();
+            // Add Boxes
+            if (ImGui::BeginMenu("Boxes"))
+            {
+                for (int box = 0; box < taskesyColumns; ++box)
+                {
+                    if (ImGui::MenuItem("Column"))
+                        showColumn[box] = true;
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("Performance"))
@@ -8688,6 +8745,7 @@ static void ShowExampleAppMainMenuBar()
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::EndMenu();
         }
+
         ImGui::EndMainMenuBar();
     }
 

@@ -457,7 +457,6 @@ int main(int, char**)
     // Our state
     bool show_taskesy_window = true;
     bool show_demo_window = true;
-    bool show_another_window = false;
 
     // Taskesy Colour
     ImVec4 clear_color = ImVec4(0.28f, 0.13f, 0.13f, 1.00f);

@@ -238,6 +238,12 @@ size_t ID;
 std::vector<bool> showColumn;               // Initializing false
 std::vector<size_t> numberColumn;           // Counting filled boxes per column
 
+// Column Names
+std::vector<const char*> columnNames;
+
+// Box text
+std::vector<const char*> text;
+
 // Forward Declarations
 struct ImGuiDemoWindowData;
 static void ShowExampleAppMainMenuBar();
@@ -391,33 +397,16 @@ void ImGui::ShowTaskesyWindow(bool* p_open)
     if (ImGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } ImGui::SameLine();
     if (ImGui::RadioButton("Copy", mode == Mode_Copy)) { mode = Mode_Copy; }
 
-    // Fill the grid with empty boxes
-    std::vector<const char*> text;
+    // We initialize the boxes and column names
     for (size_t row = 0; row < taskesyRows; ++row)
     {
         for (size_t col = 0; col < taskesyColumns; ++col)
         {
+            if ((taskesyColumns - col) % taskesyColumns == 0)
+                columnNames.push_back("No Column Name");
             text.push_back("No Text");
         }
     }
-
-    /*
-    text.push_back("Beatrice");
-    text.push_back("Betty");
-    text.push_back("Brianna");
-    text.push_back("Barry");
-    text.push_back("Bernard");
-    text.push_back("Bibi");
-    text.push_back("Blaine");
-    text.push_back("Bryn");
-    
-    static const char* names[9] =
-    {
-        "Bobby", "Beatrice", "Betty",
-        "Brianna", "Barry", "Bernard",
-        "Bibi", "Blaine", "Bryn"
-    };
-    */
 
     // Make the UI compact because there are so many fields
     // In my case does not work due to the rendering window.
@@ -431,16 +420,9 @@ void ImGui::ShowTaskesyWindow(bool* p_open)
         // Submit columns name with TableSetupColumn() and call TableHeadersRow() to create a row with a header in each column.
         // (Later we will show how TableSetupColumn() has other uses, optional flags, sizing weight etc.)
         for (size_t col = 0; col < taskesyColumns; ++col)
-        {
-            ImGui::TableSetupColumn("One");
-            //ImGui::TableSetupColumn("One");
-            //ImGui::TableSetupColumn("Two");
-            //ImGui::TableSetupColumn("Three");
-        }
+            ImGui::TableSetupColumn(columnNames[col]);
 
         ImGui::TableHeadersRow();
-        //for (int row = 0; row < taskesyRows; row++)
-        //{
 
         ID = 0;
 
@@ -452,17 +434,37 @@ void ImGui::ShowTaskesyWindow(bool* p_open)
 
             for (int n = 0; n < taskesyRows; n++)
             {
-                if (text[n] == "No Text" && showColumn[column] == true && n == numberColumn[column])
+                // We draw the box if it has text or if it is empty but we want a box from the menu
+                if (text[n*taskesyColumns + column] != "No Text" || text[n * taskesyColumns + column] == "No Text" && showColumn[column] == true && n == numberColumn[column])
                 {
-
-                    // To change when modifying the box
-                    //showColumn[column] = false;
-                    //numberColumn[column] += 1;
-
+                    ID = n * taskesyColumns + column;
                     ImGui::PushID(ID);
-                    ID++;
+                    ImGui::Button(text[ID], ImVec2(boxSizeX, boxSizeY));
 
-                    ImGui::Button(text[n], ImVec2(boxSizeX, boxSizeY));
+                    // Input buffer
+                    static char inputBuffer[128] = "";
+
+                    // If we press the button with right click
+                    if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+                        ImGui::OpenPopup("Edit Text");
+                        strncpy(inputBuffer, text[ID], sizeof(inputBuffer));
+                    }
+
+                    // We create a pop up
+                    if (ImGui::BeginPopup("Edit Text")) {
+                        ImGui::InputText("Input Text", inputBuffer, IM_ARRAYSIZE(inputBuffer));
+                        if (ImGui::Button("Aceptar")) {
+                            text[ID] = inputBuffer;
+                            showColumn[column] = false;
+                            numberColumn[column] += 1;
+                            ImGui::CloseCurrentPopup();
+                        }
+                        ImGui::SameLine();
+                        if (ImGui::Button("Cancelar")) {
+                            ImGui::CloseCurrentPopup();
+                        }
+                        ImGui::EndPopup();
+                    }
 
                     // Our buttons are both drag sources and drag targets here!
                     if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
@@ -472,9 +474,9 @@ void ImGui::ShowTaskesyWindow(bool* p_open)
 
                         // Display preview (could be anything, e.g. when dragging an image we could decide to display
                         // the filename and a small preview of the image, etc.)
-                        if (mode == Mode_Copy) { ImGui::Text("Copy %s", text[n]); }
-                        if (mode == Mode_Move) { ImGui::Text("Move %s", text[n]); }
-                        if (mode == Mode_Swap) { ImGui::Text("Swap %s", text[n]); }
+                        if (mode == Mode_Copy) { ImGui::Text("Copy %s", text[ID]); }
+                        if (mode == Mode_Move) { ImGui::Text("Move %s", text[ID]); }
+                        if (mode == Mode_Swap) { ImGui::Text("Swap %s", text[ID]); }
                         ImGui::EndDragDropSource();
                     }
                     if (ImGui::BeginDragDropTarget())
@@ -485,17 +487,17 @@ void ImGui::ShowTaskesyWindow(bool* p_open)
                             int payload_n = *(const int*)payload->Data;
                             if (mode == Mode_Copy)
                             {
-                                text[n] = text[payload_n];
+                                text[ID] = text[payload_n];
                             }
                             if (mode == Mode_Move)
                             {
-                                text[n] = text[payload_n];
+                                text[ID] = text[payload_n];
                                 text[payload_n] = "";
                             }
                             if (mode == Mode_Swap)
                             {
-                                const char* tmp = text[n];
-                                text[n] = text[payload_n];
+                                const char* tmp = text[ID];
+                                text[ID] = text[payload_n];
                                 text[payload_n] = tmp;
                             }
                         }
@@ -505,7 +507,6 @@ void ImGui::ShowTaskesyWindow(bool* p_open)
                 }
             }
         }
-        //}
         ImGui::EndTable();
     }
 
@@ -8729,7 +8730,7 @@ static void ShowExampleAppMainMenuBar()
             {
                 for (int box = 0; box < taskesyColumns; ++box)
                 {
-                    if (ImGui::MenuItem("Column"))
+                    if (ImGui::MenuItem(columnNames[box]))
                         showColumn[box] = true;
                 }
                 ImGui::EndMenu();

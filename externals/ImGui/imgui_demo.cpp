@@ -343,7 +343,7 @@ struct ImGuiDemoWindowData
 // Demonstrate most Dear ImGui features (this is big function!)
 // You may execute this function to experiment with the UI and understand what it does.
 // You may then search for keywords in the code when you are interested by a specific feature.
-void ImGui::ShowTaskesyWindow(bool* p_open)
+void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurrentBoxColumn)
 {
     // Exceptionally add an extra assert here for people confused about initial Dear ImGui setup
     // Most functions would normally just assert/crash if the context is missing.
@@ -444,26 +444,31 @@ void ImGui::ShowTaskesyWindow(bool* p_open)
                     // Input buffer
                     static char inputBuffer[128] = "";
 
-                    // If we press the button with right click
+                    // If we press the button with right click we will trigger the Pop Up
                     if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
                         ImGui::OpenPopup("Edit Text");
                         strncpy(inputBuffer, text[ID], sizeof(inputBuffer));
+                        *ptrCurrentBoxID = ID;
+                        *ptrCurrentBoxColumn = column;
                     }
 
                     // We create a pop up
-                    if (ImGui::BeginPopup("Edit Text")) {
-                        ImGui::InputText("Input Text", inputBuffer, IM_ARRAYSIZE(inputBuffer));
-                        if (ImGui::Button("Aceptar")) {
-                            text[ID] = inputBuffer;
-                            showColumn[column] = false;
-                            numberColumn[column] += 1;
-                            ImGui::CloseCurrentPopup();
+                    if (*ptrCurrentBoxID == ID)
+                    {
+                        if (ImGui::BeginPopup("Edit Text")) {
+                            ImGui::InputText("Input Text", inputBuffer, IM_ARRAYSIZE(inputBuffer));
+                            if (ImGui::Button("Aceptar")) {
+                                text[*ptrCurrentBoxID] = strdup(inputBuffer);
+                                showColumn[*ptrCurrentBoxColumn] = false;
+                                numberColumn[*ptrCurrentBoxColumn] += 1;
+                                ImGui::CloseCurrentPopup();
+                            }
+                            ImGui::SameLine();
+                            if (ImGui::Button("Cancelar")) {
+                                ImGui::CloseCurrentPopup();
+                            }
+                            ImGui::EndPopup();
                         }
-                        ImGui::SameLine();
-                        if (ImGui::Button("Cancelar")) {
-                            ImGui::CloseCurrentPopup();
-                        }
-                        ImGui::EndPopup();
                     }
 
                     // Our buttons are both drag sources and drag targets here!

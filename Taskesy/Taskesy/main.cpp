@@ -464,6 +464,13 @@ int main(int, char**)
     // Set Up Icon
     setWindowIcon(window, "../../resources/icon/taskesy_icon.png");
 
+    // Current box that we are editing
+    int currentBoxID = -1;
+    int currentBoxColumn = -1;
+    int* ptrCurrentBoxID = &currentBoxID;
+    int* ptrCurrentBoxColumn = &currentBoxColumn;
+
+
     // Main loop
     while (!glfwWindowShouldClose(window))
     {
@@ -497,7 +504,7 @@ int main(int, char**)
 
         
         if (show_taskesy_window)
-            ImGui::ShowTaskesyWindow(&show_taskesy_window);
+            ImGui::ShowTaskesyWindow(&show_taskesy_window, ptrCurrentBoxID, ptrCurrentBoxColumn);
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)

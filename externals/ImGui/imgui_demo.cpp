@@ -137,6 +137,8 @@ Index of this file:
 #include <stdlib.h>         // NULL, malloc, free, atoi
 #include <stdint.h>         // intptr_t
 #include <vector>
+#include <string>
+
 #if !defined(_MSC_VER) || _MSC_VER >= 1800
 #include <inttypes.h>       // PRId64/PRIu64, not avail in some MinGW headers.
 #endif
@@ -397,14 +399,19 @@ void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurren
     if (ImGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } ImGui::SameLine();
     if (ImGui::RadioButton("Copy", mode == Mode_Copy)) { mode = Mode_Copy; }
 
+    std::string columnName;
+
     // We initialize the boxes and column names
     for (size_t row = 0; row < taskesyRows; ++row)
     {
         for (size_t col = 0; col < taskesyColumns; ++col)
         {
             if ((taskesyColumns - col) % taskesyColumns == 0)
-                columnNames.push_back("No Column Name");
-            text.push_back("No Text");
+            {
+                columnName = "Column Name " + std::to_string(row);
+                columnNames.push_back(strdup(columnName.c_str()));
+            }
+            text.push_back("None");
         }
     }
 
@@ -435,14 +442,14 @@ void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurren
             for (int n = 0; n < taskesyRows; n++)
             {
                 // We draw the box if it has text or if it is empty but we want a box from the menu
-                if (text[n*taskesyColumns + column] != "No Text" || text[n * taskesyColumns + column] == "No Text" && showColumn[column] == true && n == numberColumn[column])
+                if (text[n*taskesyColumns + column] != "None" || text[n * taskesyColumns + column] == "None" && showColumn[column] == true && n == numberColumn[column])
                 {
                     ID = n * taskesyColumns + column;
                     ImGui::PushID(ID);
                     ImGui::Button(text[ID], ImVec2(boxSizeX, boxSizeY));
 
                     // Input buffer
-                    static char inputBuffer[128] = "";
+                    static char inputBuffer[256] = "";
 
                     // If we press the button with right click we will trigger the Pop Up
                     if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
@@ -8690,30 +8697,62 @@ static void ShowExampleAppMainMenuBar()
             ImGui::EndMenu();
         }
         */
-        /*
-        if (ImGui::BeginMenu("Add Row"))
+        
+        // Add column
+        if (ImGui::Button("Add Column"))
         {
-            Row++;
+            taskesyColumns++;
+        }
+
+        // Add row
+        if (ImGui::Button("Add Row"))
+        {
+            taskesyRows++;
+        }
+        
+        // Add Box
+        if (ImGui::BeginMenu("Add Box"))
+        {
+            for (int box = 0; box < taskesyColumns; ++box)
+            {
+                if (ImGui::MenuItem(columnNames[box]))
+                    showColumn[box] = true;
+            }
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Delete Row"))
+
+        if (ImGui::BeginMenu("Delete"))
         {
-            Row--;
+            // Delete column
+            if (ImGui::MenuItem("Delete Column"))
+            {
+                if (taskesyColumns > 1)
+                    taskesyColumns--;
+            }
+
+            ImGui::Separator();
+
+            // Delete row
+            if (ImGui::MenuItem("Delete Row"))
+            {
+                if (taskesyRows > 1)
+                    taskesyRows--;
+            }
+
+            ImGui::EndMenu();
+        }
+
+        // Performance
+        if (ImGui::BeginMenu("Performance"))
+        {
+            ImGuiIO& io = ImGui::GetIO(); (void)io;
+            io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+            io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::EndMenu();
         }
         
-        if (ImGui::BeginMenu("Add Column"))
-        {
-            Column++;
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Delete Column"))
-        {
-            Column--;
-            ImGui::EndMenu();
-        }
-        */
-
+        /*
         if (ImGui::BeginMenu("Add"))
         {
             // Add columns
@@ -8742,15 +8781,7 @@ static void ShowExampleAppMainMenuBar()
             }
             ImGui::EndMenu();
         }
-
-        if (ImGui::BeginMenu("Performance"))
-        {
-            ImGuiIO& io = ImGui::GetIO(); (void)io;
-            io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-            io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            ImGui::EndMenu();
-        }
+        */
 
         ImGui::EndMainMenuBar();
     }

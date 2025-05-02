@@ -235,7 +235,7 @@ Index of this file:
 
 //Taskesy
 size_t taskesyColumns = 1;
-size_t taskesyRows = 16;
+size_t taskesyRows = 3; // 16;
 size_t ID;
 std::vector<bool> showColumn;               // Initializing false
 std::vector<size_t> numberColumn;           // Counting filled boxes per column
@@ -399,22 +399,6 @@ void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurren
     if (ImGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } ImGui::SameLine();
     if (ImGui::RadioButton("Copy", mode == Mode_Copy)) { mode = Mode_Copy; }
 
-    std::string columnName;
-
-    // We initialize the boxes and column names
-    for (size_t row = 0; row < taskesyRows; ++row)
-    {
-        for (size_t col = 0; col < taskesyColumns; ++col)
-        {
-            if ((taskesyColumns - col) % taskesyColumns == 0)
-            {
-                columnName = "Column Name " + std::to_string(row);
-                columnNames.push_back(strdup(columnName.c_str()));
-            }
-            text.push_back("None");
-        }
-    }
-
     // Make the UI compact because there are so many fields
     // In my case does not work due to the rendering window.
 
@@ -437,14 +421,14 @@ void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurren
         for (int column = 0; column < taskesyColumns; column++)
         {
             ImGui::TableSetColumnIndex(column);
-            ImGui::Text("Hello %d", column/*, row */);
+            // ImGui::Text("Hello %d", column/*, row */); // Debug
 
-            for (int n = 0; n < taskesyRows; n++)
+            for (int row = 0; row < taskesyRows; row++)
             {
                 // We draw the box if it has text or if it is empty but we want a box from the menu
-                if (text[n*taskesyColumns + column] != "None" || text[n * taskesyColumns + column] == "None" && showColumn[column] == true && n == numberColumn[column])
+                if (text[row * taskesyColumns + column] != "None" || text[row * taskesyColumns + column] == "None" && showColumn[column] == true && row == numberColumn[column])
                 {
-                    ID = n * taskesyColumns + column;
+                    ID = row * taskesyColumns + column;
                     ImGui::PushID(ID);
                     ImGui::Button(text[ID], ImVec2(boxSizeX, boxSizeY));
 
@@ -482,7 +466,7 @@ void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurren
                     if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
                     {
                         // Set payload to carry the index of our item (could be anything)
-                        ImGui::SetDragDropPayload("DND_DEMO_CELL", &n, sizeof(int));
+                        ImGui::SetDragDropPayload("DND_DEMO_CELL", &row, sizeof(int));
 
                         // Display preview (could be anything, e.g. when dragging an image we could decide to display
                         // the filename and a small preview of the image, etc.)
@@ -8665,6 +8649,76 @@ void ImGui::ShowUserGuide()
     ImGui::Unindent();
 }
 
+
+void ImGui::TaskesyAddColumn()
+{
+    std::string columnName;
+
+    // We initialize the boxes and column name and we only do it if there arent empty boxes
+    for (size_t row = 0; row < taskesyRows; ++row)
+    {
+        if (row == 0)
+        {
+            columnName = "Column Name " + std::to_string(taskesyColumns - 1);
+            columnNames.push_back(strdup(columnName.c_str()));
+        }
+        text.push_back("None");
+    }
+    
+    // If you add a column, the boxes' index change, so we have to sort them
+    for (int row = taskesyRows-1; row > 0; --row)
+    {
+        for (int column = taskesyColumns-2; column >= 0; --column)
+        {
+            if (text[row * (taskesyColumns - 1) + column] != "None")
+            {
+                text[row * (taskesyColumns - 1) + column + row] = strdup(text[row * (taskesyColumns - 1) + column]);
+                text[row * (taskesyColumns - 1) + column] = "None";
+            }
+        }
+    }
+}
+
+void ImGui::TaskesyDeleteColumn()
+{
+    
+    if (taskesyColumns > 1)
+    {
+        taskesyColumns--;
+        columnNames.pop_back();
+
+        // If you delete a column, you lose its boxes
+        /*
+        for (int row = 0; row < taskesyColumns; ++row)
+            text[row * (taskesyColumns + 1) + taskesyColumns] = "None";
+        */
+
+        for (size_t row = 0; row < taskesyRows; ++row)
+            text.pop_back();
+    }
+}
+
+void ImGui::TaskesyAddRow()
+{
+    taskesyRows++;
+
+    // We fill a row with empty boxes
+    for (size_t column = 0; column < taskesyColumns; ++column)
+        text.push_back("None");
+}
+
+void ImGui::TaskesyDeleteRow()
+{
+    if (taskesyRows > 1)
+    {
+        taskesyRows--;
+
+        // If you delete a row, you lose its boxes
+        for (size_t column = 0; column < taskesyColumns; ++column)
+            text.pop_back();
+    }
+}
+
 //-----------------------------------------------------------------------------
 // [SECTION] Example App: Main Menu Bar / ShowExampleAppMainMenuBar()
 //-----------------------------------------------------------------------------
@@ -8698,18 +8752,6 @@ static void ShowExampleAppMainMenuBar()
         }
         */
         
-        // Add column
-        if (ImGui::Button("Add Column"))
-        {
-            taskesyColumns++;
-        }
-
-        // Add row
-        if (ImGui::Button("Add Row"))
-        {
-            taskesyRows++;
-        }
-        
         // Add Box
         if (ImGui::BeginMenu("Add Box"))
         {
@@ -8721,23 +8763,28 @@ static void ShowExampleAppMainMenuBar()
             ImGui::EndMenu();
         }
 
+        // Add column
+        if (ImGui::Button("Add Column"))
+        {
+            taskesyColumns++;
+            ImGui::TaskesyAddColumn();
+        }
+
+        // Add row
+        if (ImGui::Button("Add Row"))
+            ImGui::TaskesyAddRow();
+
         if (ImGui::BeginMenu("Delete"))
         {
             // Delete column
             if (ImGui::MenuItem("Delete Column"))
-            {
-                if (taskesyColumns > 1)
-                    taskesyColumns--;
-            }
+                ImGui::TaskesyDeleteColumn();
 
             ImGui::Separator();
 
             // Delete row
             if (ImGui::MenuItem("Delete Row"))
-            {
-                if (taskesyRows > 1)
-                    taskesyRows--;
-            }
+                ImGui::TaskesyDeleteRow();
 
             ImGui::EndMenu();
         }
@@ -8752,6 +8799,8 @@ static void ShowExampleAppMainMenuBar()
             ImGui::EndMenu();
         }
         
+        // Older Top Bar Menu
+
         /*
         if (ImGui::BeginMenu("Add"))
         {

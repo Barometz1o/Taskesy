@@ -470,6 +470,7 @@ int main(int, char**)
     int* ptrCurrentBoxID = &currentBoxID;
     int* ptrCurrentBoxColumn = &currentBoxColumn;
 
+    ImGui::TaskesyAddColumn();
 
     // Main loop
     while (!glfwWindowShouldClose(window))
@@ -502,7 +503,6 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        
         if (show_taskesy_window)
             ImGui::ShowTaskesyWindow(&show_taskesy_window, ptrCurrentBoxID, ptrCurrentBoxColumn);
 

@@ -345,7 +345,7 @@ struct ImGuiDemoWindowData
 // Demonstrate most Dear ImGui features (this is big function!)
 // You may execute this function to experiment with the UI and understand what it does.
 // You may then search for keywords in the code when you are interested by a specific feature.
-void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurrentBoxColumn)
+void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurrentBoxColumn, int* ptrCurrentColumn)
 {
     // Exceptionally add an extra assert here for people confused about initial Dear ImGui setup
     // Most functions would normally just assert/crash if the context is missing.
@@ -405,8 +405,11 @@ void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurren
     // Flags to create the table
     static ImGuiTableFlags flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV;
 
+    // Input buffer
+    static char inputBuffer[256] = "";
+
     // Create Tables/Reorderable, hideable, with headers
-    if (ImGui::BeginTable("table1", taskesyColumns, flags))
+    if (ImGui::BeginTable("TaskesyMainTable", taskesyColumns, flags))
     {
         // Submit columns name with TableSetupColumn() and call TableHeadersRow() to create a row with a header in each column.
         // (Later we will show how TableSetupColumn() has other uses, optional flags, sizing weight etc.)
@@ -421,6 +424,30 @@ void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurren
         for (int column = 0; column < taskesyColumns; column++)
         {
             ImGui::TableSetColumnIndex(column);
+            // If we press the button with right click we will trigger the Pop Up
+            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+                ImGui::OpenPopup("Edit Text");
+                strncpy(inputBuffer, columnNames[column], sizeof(inputBuffer));
+                *ptrCurrentColumn = column;
+            }
+
+            // We create a pop up
+            if (*ptrCurrentColumn == column)
+            {
+                if (ImGui::BeginPopup("Edit Text")) {
+                    ImGui::InputText("Input Text", inputBuffer, IM_ARRAYSIZE(inputBuffer));
+                    if (ImGui::Button("Accept")) {
+                        columnNames[column] = strdup(inputBuffer);
+                        ImGui::CloseCurrentPopup();
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Cancel")) {
+                        ImGui::CloseCurrentPopup();
+                    }
+                    ImGui::EndPopup();
+                }
+            }
+
             // ImGui::Text("Hello %d", column/*, row */); // Debug
 
             for (int row = 0; row < taskesyRows; row++)
@@ -431,9 +458,6 @@ void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurren
                     ID = row * taskesyColumns + column;
                     ImGui::PushID(ID);
                     ImGui::Button(text[ID], ImVec2(boxSizeX, boxSizeY));
-
-                    // Input buffer
-                    static char inputBuffer[256] = "";
 
                     // If we press the button with right click we will trigger the Pop Up
                     if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
@@ -448,14 +472,14 @@ void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurren
                     {
                         if (ImGui::BeginPopup("Edit Text")) {
                             ImGui::InputText("Input Text", inputBuffer, IM_ARRAYSIZE(inputBuffer));
-                            if (ImGui::Button("Aceptar")) {
+                            if (ImGui::Button("Accept")) {
                                 text[*ptrCurrentBoxID] = strdup(inputBuffer);
                                 showColumn[*ptrCurrentBoxColumn] = false;
                                 numberColumn[*ptrCurrentBoxColumn] += 1;
                                 ImGui::CloseCurrentPopup();
                             }
                             ImGui::SameLine();
-                            if (ImGui::Button("Cancelar")) {
+                            if (ImGui::Button("Cancel")) {
                                 ImGui::CloseCurrentPopup();
                             }
                             ImGui::EndPopup();

@@ -467,8 +467,10 @@ int main(int, char**)
     // Current box that we are editing
     int currentBoxID = -1;
     int currentBoxColumn = -1;
+    int currentColumn = -1;
     int* ptrCurrentBoxID = &currentBoxID;
     int* ptrCurrentBoxColumn = &currentBoxColumn;
+    int* ptrCurrentColumn = &currentColumn;
 
     ImGui::TaskesyAddColumn();
 
@@ -504,7 +506,7 @@ int main(int, char**)
         ImGui::NewFrame();
 
         if (show_taskesy_window)
-            ImGui::ShowTaskesyWindow(&show_taskesy_window, ptrCurrentBoxID, ptrCurrentBoxColumn);
+            ImGui::ShowTaskesyWindow(&show_taskesy_window, ptrCurrentBoxID, ptrCurrentBoxColumn, ptrCurrentColumn);
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)

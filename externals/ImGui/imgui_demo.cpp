@@ -8684,35 +8684,24 @@ void ImGui::TaskesyDeleteColumn()
     
     if (taskesyColumns > 1)
     {
-        taskesyColumns--;
         columnNames.pop_back();
-
-        // If you delete a column, you lose its boxes
-        /*
-        for (int row = 0; row < taskesyColumns; ++row)
-            text[row * (taskesyColumns + 1) + taskesyColumns] = "None";
-        */
-
-        text.erase(text.begin() + text.size() - taskesyRows, text.end());
-
-        //for (size_t row = 0; row < taskesyRows; ++row)
-            //text.pop_back();
-
+        taskesyColumns--;
 
         // If you delete a column, the boxes' index change, so we have to sort them
-        /*
-        for (int row = taskesyRows - 1; row > 0; --row)
+        for (int row = 1; row < taskesyRows; ++row)
         {
-            for (int column = taskesyColumns - 2; column >= 0; --column)
+            for (int column = 0; column < taskesyColumns; ++column)
             {
-                if (text[row * (taskesyColumns - 1) + column] != "None")
+                if (text[row * (taskesyColumns) + column + row] != "None")
                 {
-                    text[row * (taskesyColumns - 1) + column] = strdup(text[row * (taskesyColumns - 1) + column + row]);
-                    text[row * (taskesyColumns - 1) + column + row] = "None";
+                    text[row * (taskesyColumns) + column] = strdup(text[row * (taskesyColumns) + column + row]);
+                    text[row * (taskesyColumns) + column + row] = "None";
                 }
             }
         }
-        */
+
+        // If you delete a column, you lose its boxes
+        text.erase(text.begin() + text.size() - taskesyRows, text.end());
     }
 }
 

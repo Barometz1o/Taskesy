@@ -8693,8 +8693,26 @@ void ImGui::TaskesyDeleteColumn()
             text[row * (taskesyColumns + 1) + taskesyColumns] = "None";
         */
 
-        for (size_t row = 0; row < taskesyRows; ++row)
-            text.pop_back();
+        text.erase(text.begin() + text.size() - taskesyRows, text.end());
+
+        //for (size_t row = 0; row < taskesyRows; ++row)
+            //text.pop_back();
+
+
+        // If you delete a column, the boxes' index change, so we have to sort them
+        /*
+        for (int row = taskesyRows - 1; row > 0; --row)
+        {
+            for (int column = taskesyColumns - 2; column >= 0; --column)
+            {
+                if (text[row * (taskesyColumns - 1) + column] != "None")
+                {
+                    text[row * (taskesyColumns - 1) + column] = strdup(text[row * (taskesyColumns - 1) + column + row]);
+                    text[row * (taskesyColumns - 1) + column + row] = "None";
+                }
+            }
+        }
+        */
     }
 }
 
@@ -8790,6 +8808,8 @@ static void ShowExampleAppMainMenuBar()
         }
 
         // Performance
+            // Performance Menu
+        /*
         if (ImGui::BeginMenu("Performance"))
         {
             ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -8798,7 +8818,14 @@ static void ShowExampleAppMainMenuBar()
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::EndMenu();
         }
-        
+        */
+
+            // Real Time Performance Visualization
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+
         // Older Top Bar Menu
 
         /*

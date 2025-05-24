@@ -242,6 +242,8 @@ std::vector<size_t> numberColumn;           // Counting filled boxes per column
 
 // Column Names
 std::vector<const char*> columnNames;
+int currentColumn = -1;
+static bool columnPopUp = false;
 
 // Box text
 std::vector<const char*> text;
@@ -345,7 +347,7 @@ struct ImGuiDemoWindowData
 // Demonstrate most Dear ImGui features (this is big function!)
 // You may execute this function to experiment with the UI and understand what it does.
 // You may then search for keywords in the code when you are interested by a specific feature.
-void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurrentBoxColumn, int* ptrCurrentColumn)
+void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurrentBoxColumn)
 {
     // Exceptionally add an extra assert here for people confused about initial Dear ImGui setup
     // Most functions would normally just assert/crash if the context is missing.
@@ -407,6 +409,7 @@ void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurren
 
     // Input buffer
     static char inputBuffer[256] = "";
+    const char* noText = "";
 
     // Create Tables/Reorderable, hideable, with headers
     if (ImGui::BeginTable("TaskesyMainTable", taskesyColumns, flags))
@@ -419,30 +422,33 @@ void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurren
         ImGui::TableHeadersRow();
 
         ID = 0;
-
         ImGui::TableNextRow();
         for (int column = 0; column < taskesyColumns; column++)
         {
             ImGui::TableSetColumnIndex(column);
-            // If we press the button with right click we will trigger the Pop Up
-            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-                ImGui::OpenPopup("Edit Text");
-                strncpy(inputBuffer, columnNames[column], sizeof(inputBuffer));
-                *ptrCurrentColumn = column;
-            }
 
             // We create a pop up
-            if (*ptrCurrentColumn == column)
+            if (currentColumn == column)
             {
+                ImGui::OpenPopup("Edit Text");
+                if (columnPopUp)
+                {
+                    strncpy(inputBuffer, columnNames[column], sizeof(inputBuffer));
+                    columnPopUp = false;
+                }
                 if (ImGui::BeginPopup("Edit Text")) {
                     ImGui::InputText("Input Text", inputBuffer, IM_ARRAYSIZE(inputBuffer));
                     if (ImGui::Button("Accept")) {
-                        columnNames[column] = strdup(inputBuffer);
+                        columnNames[currentColumn] = strdup(inputBuffer);
                         ImGui::CloseCurrentPopup();
+                        currentColumn = -1;
+                        strncpy(inputBuffer, noText, sizeof(noText));
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("Cancel")) {
                         ImGui::CloseCurrentPopup();
+                        currentColumn = -1;
+                        strncpy(inputBuffer, noText, sizeof(noText));
                     }
                     ImGui::EndPopup();
                 }
@@ -8770,6 +8776,17 @@ static void ShowExampleAppMainMenuBar()
             ShowExampleMenuFile();
             ImGui::EndMenu();
         }
+
+        if (ImGui::BeginMenu("Edit Column Names"))
+        {
+            for (int column = 0; column < taskesyColumns; ++column)
+            {
+                if (ImGui::MenuItem(columnNames[column]))
+                    currentColumn = column;
+            }
+            ImGui::EndMenu();
+        }
+
         /*
         if (ImGui::BeginMenu("Edit"))
         {
@@ -8789,7 +8806,10 @@ static void ShowExampleAppMainMenuBar()
             for (int box = 0; box < taskesyColumns; ++box)
             {
                 if (ImGui::MenuItem(columnNames[box]))
+                {
                     showColumn[box] = true;
+                    columnPopUp = true;
+                }
             }
             ImGui::EndMenu();
         }

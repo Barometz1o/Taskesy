@@ -48,8 +48,7 @@
               "RelativeToolTip": "Taskesy\\Utils\\PlatformWindowsUtils.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-25T17:20:04.409Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-25T17:20:04.409Z"
             },
             {
               "$type": "Document",
@@ -61,8 +60,7 @@
               "RelativeToolTip": "Taskesy\\Utils\\PlatformUtils.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-25T17:20:03.123Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-25T17:20:03.123Z"
             },
             {
               "$type": "Document",
@@ -74,8 +72,7 @@
               "RelativeToolTip": "..\\externals\\ImGui\\imgui.h",
               "ViewState": "AgIAAD8AAAAAAAAAAAAAAE4AAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-25T16:17:25.022Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-25T16:17:25.022Z"
             },
             {
               "$type": "Document",
@@ -85,7 +82,7 @@
               "RelativeDocumentMoniker": "..\\externals\\ImGui\\imgui_demo.cpp",
               "ToolTip": "E:\\WORKING\\Taskesy\\Taskesy\\externals\\ImGui\\imgui_demo.cpp",
               "RelativeToolTip": "..\\externals\\ImGui\\imgui_demo.cpp",
-              "ViewState": "AgIAAEMiAAAAAAAAAAAEwFIiAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAD0iAAAAAAAAAAAEwFIiAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-05-25T15:24:57.681Z",
               "EditorCaption": ""
@@ -100,8 +97,7 @@
               "RelativeToolTip": "Taskesy\\main.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAowBcAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-02T15:46:01.625Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-02T15:46:01.625Z"
             }
           ]
         }

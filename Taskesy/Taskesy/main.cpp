@@ -19,9 +19,9 @@
 #include <iostream>
 #include <stdio.h>          // printf, fprintf
 #include <stdlib.h>         // abort
-#define GLFW_INCLUDE_NONE
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+//#define GLFW_INCLUDE_NONE
+//#define GLFW_INCLUDE_VULKAN
+//#include <GLFW/glfw3.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -504,7 +504,7 @@ int main(int, char**)
         ImGui::NewFrame();
 
         if (show_taskesy_window)
-            ImGui::ShowTaskesyWindow(&show_taskesy_window, ptrCurrentBoxID, ptrCurrentBoxColumn);
+            ImGui::ShowTaskesyWindow(window, &show_taskesy_window, ptrCurrentBoxID, ptrCurrentBoxColumn);
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)

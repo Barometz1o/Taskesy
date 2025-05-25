@@ -139,6 +139,9 @@ Index of this file:
 #include <vector>
 #include <string>
 
+// Taskesy
+#include <Taskesy/Utils/PlatformUtils.h>
+
 #if !defined(_MSC_VER) || _MSC_VER >= 1800
 #include <inttypes.h>       // PRId64/PRIu64, not avail in some MinGW headers.
 #endif
@@ -250,7 +253,7 @@ std::vector<const char*> text;
 
 // Forward Declarations
 struct ImGuiDemoWindowData;
-static void ShowExampleAppMainMenuBar();
+static void ShowExampleAppMainMenuBar(GLFWwindow* window);
 static void ShowExampleAppAssetsBrowser(bool* p_open);
 static void ShowExampleAppConsole(bool* p_open);
 static void ShowExampleAppCustomRendering(bool* p_open);
@@ -347,7 +350,7 @@ struct ImGuiDemoWindowData
 // Demonstrate most Dear ImGui features (this is big function!)
 // You may execute this function to experiment with the UI and understand what it does.
 // You may then search for keywords in the code when you are interested by a specific feature.
-void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurrentBoxColumn)
+void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentBoxID, int* ptrCurrentBoxColumn)
 {
     // Exceptionally add an extra assert here for people confused about initial Dear ImGui setup
     // Most functions would normally just assert/crash if the context is missing.
@@ -372,7 +375,7 @@ void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurren
         ImGuiWindowFlags_NoBackground*/); // optional, make it transparent
 
     // Menu bar
-    ShowExampleAppMainMenuBar();
+    ShowExampleAppMainMenuBar(window);
 
     // Before drawing
     int boxSizeX = x_coord / (taskesyColumns + 0.19);
@@ -448,7 +451,7 @@ void ImGui::ShowTaskesyWindow(bool* p_open, int* ptrCurrentBoxID, int* ptrCurren
                     if (ImGui::Button("Cancel")) {
                         ImGui::CloseCurrentPopup();
                         currentColumn = -1;
-                        strncpy(inputBuffer, noText, sizeof(noText));
+                        //strncpy(inputBuffer, noText, sizeof(noText));
                     }
                     ImGui::EndPopup();
                 }
@@ -555,7 +558,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
     static ImGuiDemoWindowData demo_data;
 
     // Examples Apps (accessible from the "Examples" menu)
-    if (demo_data.ShowMainMenuBar)          { ShowExampleAppMainMenuBar(); }
+    //if (demo_data.ShowMainMenuBar)          { ShowExampleAppMainMenuBar(GLFWwindow* window); }
     if (demo_data.ShowAppDocuments)         { ShowExampleAppDocuments(&demo_data.ShowAppDocuments); }
     if (demo_data.ShowAppAssetsBrowser)     { ShowExampleAppAssetsBrowser(&demo_data.ShowAppAssetsBrowser); }
     if (demo_data.ShowAppConsole)           { ShowExampleAppConsole(&demo_data.ShowAppConsole); }
@@ -8767,15 +8770,41 @@ void ImGui::TaskesyDeleteRow()
 // Note the difference between BeginMainMenuBar() and BeginMenuBar():
 // - BeginMenuBar() = menu-bar inside current window (which needs the ImGuiWindowFlags_MenuBar flag!)
 // - BeginMainMenuBar() = helper to create menu-bar-sized window at the top of the main viewport + call BeginMenuBar() into it.
-static void ShowExampleAppMainMenuBar()
+static void ShowExampleAppMainMenuBar(GLFWwindow* window)
 {
     if (ImGui::BeginMainMenuBar())
     {
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("New", "Ctrl+N")) {
+                ImGui::EndMenu();
+            }
+            if (ImGui::MenuItem("Open", "Ctrl+O")) {
+                std::string filePath = FileDialogs::OpenFile("Taskesy (*.todo)\0*.todo\0", window);
+                if (!filePath.empty())
+                {
+
+                }
+
+                ImGui::EndMenu();
+            }
+            if (ImGui::MenuItem("Save As...", "Ctrl+S")) {
+                std::string filePath = FileDialogs::SaveFile("Taskesy (*.todo)\0*.todo\0", window);
+                if (!filePath.empty())
+                {
+
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenu();
+        }
+        
+        /*
         if (ImGui::BeginMenu("File"))
         {
             ShowExampleMenuFile();
             ImGui::EndMenu();
         }
+        */
 
         if (ImGui::BeginMenu("Edit Column Names"))
         {

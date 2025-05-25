@@ -76,6 +76,11 @@ Index of this file:
 #include <stddef.h>                 // ptrdiff_t, NULL
 #include <string.h>                 // memset, memmove, memcpy, strlen, strchr, strcpy, strcmp
 
+// Taskesy
+#define GLFW_INCLUDE_NONE
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+
 // Define attributes of all API symbols declarations (e.g. for DLL under Windows)
 // IMGUI_API is used for core imgui functions, IMGUI_IMPL_API is used for the default backends files (imgui_impl_xxx.h)
 // Using dear imgui via a shared library is not recommended: we don't guarantee backward nor forward ABI compatibility + this is a call-heavy library and function call overhead adds up.
@@ -343,8 +348,7 @@ namespace ImGui
     IMGUI_API void          TaskesyDeleteColumn();                                                                                      // Taskesy delete column
     IMGUI_API void          TaskesyAddRow();                                                                                            // Taskesy add row
     IMGUI_API void          TaskesyDeleteRow();                                                                                         // Taskesy delete row
-    IMGUI_API void          ShowTaskesyWindow(bool* p_open = NULL, int* ptrCurrentBoxID = NULL, int* ptrCurrentBoxColumn = NULL);       // Show Taskesy Window
-
+    IMGUI_API void          ShowTaskesyWindow(GLFWwindow* window, bool* p_open = NULL, int* ptrCurrentBoxID = NULL, int* ptrCurrentBoxColumn = NULL);       // Show Taskesy Window
     IMGUI_API void          ShowDemoWindow(bool* p_open = NULL);        // create Demo window. demonstrate most ImGui features. call this to learn about the library! try to make it always available in your application!
     IMGUI_API void          ShowMetricsWindow(bool* p_open = NULL);     // create Metrics/Debugger window. display Dear ImGui internals: windows, draw commands, various internal state, etc.
     IMGUI_API void          ShowDebugLogWindow(bool* p_open = NULL);    // create Debug Log window. display a simplified log of important dear imgui events.

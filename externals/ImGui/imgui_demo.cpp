@@ -412,7 +412,8 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
 
     // Input buffer
     static char inputBuffer[256] = "";
-    const char* noText = "";
+    const char* noText = "No text";
+    const char* noneText = "";
 
     // Create Tables/Reorderable, hideable, with headers
     if (ImGui::BeginTable("TaskesyMainTable", taskesyColumns, flags))
@@ -443,15 +444,20 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                     ImGui::InputText("Input Text", inputBuffer, IM_ARRAYSIZE(inputBuffer));
                     if (ImGui::Button("Accept")) {
                         columnNames[currentColumn] = strdup(inputBuffer);
+                        if (!strcmp(columnNames[currentColumn], ""))
+                        {
+                            strncpy(inputBuffer, noText, sizeof(noText));
+                            columnNames[currentColumn] = strdup(inputBuffer);
+                        }
                         ImGui::CloseCurrentPopup();
                         currentColumn = -1;
-                        strncpy(inputBuffer, noText, sizeof(noText));
+                        strncpy(inputBuffer, noneText, sizeof(noneText));
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("Cancel")) {
                         ImGui::CloseCurrentPopup();
                         currentColumn = -1;
-                        //strncpy(inputBuffer, noText, sizeof(noText));
+                        strncpy(inputBuffer, noneText, sizeof(noneText));
                     }
                     ImGui::EndPopup();
                 }
@@ -486,10 +492,12 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                                 showColumn[*ptrCurrentBoxColumn] = false;
                                 numberColumn[*ptrCurrentBoxColumn] += 1;
                                 ImGui::CloseCurrentPopup();
+                                strncpy(inputBuffer, noneText, sizeof(noneText));
                             }
                             ImGui::SameLine();
                             if (ImGui::Button("Cancel")) {
                                 ImGui::CloseCurrentPopup();
+                                strncpy(inputBuffer, noneText, sizeof(noneText));
                             }
                             ImGui::EndPopup();
                         }

@@ -8963,8 +8963,12 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
             {
                 if (ImGui::MenuItem(columnNames[box]))
                 {
-                    showColumn[box] = true;
-                    columnPopUp = true;
+                    if (taskesyRows > numberColumn[box])
+                    {
+                        showColumn[box] = true;
+                        columnPopUp = true;
+                    }
+
                 }
                 if (box != taskesyColumns - 1)
                     ImGui::Separator();

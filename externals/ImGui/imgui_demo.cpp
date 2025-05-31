@@ -238,11 +238,11 @@ Index of this file:
 #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
 
 //Taskesy
-size_t taskesyColumns = 1;
-size_t taskesyRows = 3; // 16;
+int taskesyColumns = 1;
+int taskesyRows = 3;
 size_t ID;
 std::vector<bool> showColumn;               // Initializing false
-std::vector<size_t> numberColumn;           // Counting filled boxes per column
+std::vector<int> numberColumn;           // Counting filled boxes per column
 
 // Column Names
 std::vector<const char*> columnNames;
@@ -255,6 +255,9 @@ std::vector<const char*> text;
 // Color
 ImVec4* ptrColor;
 bool colorWindow = false;
+ImVec4 boxColor(0.8f, 0.4f, 0.4f, 0.8f);
+ImVec4* ptrBoxColor = &boxColor;
+bool boxColorWindow = false;
 
 // Forward Declarations
 struct ImGuiDemoWindowData;
@@ -352,20 +355,48 @@ struct ImGuiDemoWindowData
     ~ImGuiDemoWindowData() { if (DemoTree) ExampleTree_DestroyNode(DemoTree); }
 };
 
+// We change the box color with the selected color
+void changeButtonColor()
+{
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 0.8f));                 // Normal Color
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 0.9f));          // If hovered
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 1.0f));           // On Click
+}
+
 // Demonstrate most Dear ImGui features (this is big function!)
 // You may execute this function to experiment with the UI and understand what it does.
 // You may then search for keywords in the code when you are interested by a specific feature.
 void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentBoxID, int* ptrCurrentBoxColumn, ImVec4* ptr_color)
 {
-    // Setting Taskesy Colour if we want to change It
+    // Setting Taskesy Color if we want to change It
     ptrColor = ptr_color;
     if (colorWindow)
     {
+        // Color Pop Up
         ImGui::Begin("Background Color", nullptr, 
             ImGuiWindowFlags_NoTitleBar);
         ImGui::ColorEdit3("Background Color", (float*)ptrColor);
         if (ImGui::Button("Accept")) {
             colorWindow = false;
+        }
+        ImGui::End();
+    }
+
+    // Setting Taskesy Box Color if we want to change It
+    bool changedColor = false;
+    if (boxColorWindow)
+    {
+        // If we have previously modified the color
+        //if (changedColor)
+            //ImGui::PopStyleColor(3);
+
+        // Color Pop Up
+        ImGui::Begin("Box Color", nullptr,
+            ImGuiWindowFlags_NoTitleBar);
+        ImGui::ColorEdit3("Box Color", (float*)ptrBoxColor);
+        if (ImGui::Button("Accept")) {
+            boxColorWindow = false;
+            changedColor = true;
         }
         ImGui::End();
     }
@@ -436,6 +467,8 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
     const char* noText = "No text";
     const char* noneText = "";
 
+    changeButtonColor();
+
     // Create Tables/Reorderable, hideable, with headers
     if (ImGui::BeginTable("TaskesyMainTable", taskesyColumns, flags))
     {
@@ -489,11 +522,12 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
             for (int row = 0; row < taskesyRows; row++)
             {
                 // We draw the box if it has text or if it is empty but we want a box from the menu
-                if (text[row * taskesyColumns + column] != "None" || text[row * taskesyColumns + column] == "None" && showColumn[column] == true && row == numberColumn[column])
+                //if (text[row * taskesyColumns + column] != "None" || text[row * taskesyColumns + column] == "None" && showColumn[column] == true && row == numberColumn[column])
+                if (text[row * taskesyColumns + column] != "None" || (showColumn[column] && row == numberColumn[column]))
                 {
                     ID = row * taskesyColumns + column;
                     ImGui::PushID(ID);
-                    ImGui::Button(text[ID], ImVec2(boxSizeX, boxSizeY));
+                    ImGui::Button(text[ID], ImVec2(boxSizeX, boxSizeY)); // To change
 
                     // If we press the button with right click we will trigger the Pop Up
                     if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
@@ -574,6 +608,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
         ImGui::EndTable();
     }
 
+    ImGui::PopStyleColor(3);
     ImGui::End();
 }
 
@@ -8807,16 +8842,62 @@ void ImGui::TaskesyDeleteRow()
 // - BeginMainMenuBar() = helper to create menu-bar-sized window at the top of the main viewport + call BeginMenuBar() into it.
 static void ShowExampleAppMainMenuBar(GLFWwindow* window)
 {
+    //changeButtonColor();
+
     if (ImGui::BeginMainMenuBar())
     {
         if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("Change Colour", "Ctrl+C")) {
+            if (ImGui::MenuItem("Change Background Color", "Ctrl+C")) {
                 colorWindow = true;
             }
 
             ImGui::Separator();
 
+            if (ImGui::MenuItem("Change Box Color", "Ctrl+C")) {
+                boxColorWindow = true;
+            }
+
+            ImGui::Separator();
+
             if (ImGui::MenuItem("New", "Ctrl+N")) {
+                // Columns and rows
+                taskesyRows = 3;
+                taskesyColumns = 1;
+
+                // Because the names are incremental
+                while (!columnNames.empty())
+                {
+                    columnNames.pop_back();
+                    showColumn.pop_back();
+                    numberColumn.pop_back();
+                }
+
+                for (size_t i = 0; i < taskesyColumns; ++i)
+                {
+                    ImGui::TaskesyAddColumn();
+                }
+
+                showColumn.resize(taskesyColumns, false);
+                numberColumn.resize(taskesyColumns, 0);
+
+                while (!text.empty())
+                {
+                    text.pop_back();
+                }
+
+                text.resize(taskesyColumns * taskesyRows, "None");
+                currentColumn = -1;
+                columnPopUp = false;
+
+                // Color
+                ImVec4 clear_color(0.28f, 0.13f, 0.13f, 1.0f);
+                *ptrColor = clear_color;
+                colorWindow = false;
+
+                // Box color
+                boxColor = ImVec4(0.8f, 0.4f, 0.4f, 0.8f);
+                ptrBoxColor = &boxColor;
+                boxColorWindow = false;
             }
 
             ImGui::Separator();
@@ -8836,7 +8917,7 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
                 if (!filePath.empty())
                 {
                     DataSerializer serializer;
-                    serializer.Serialize(ptrColor, taskesyRows, taskesyColumns, columnNames, text, filePath);
+                    serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, filePath);
                 }
             }
             ImGui::EndMenu();
@@ -8969,6 +9050,7 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
         }
         */
 
+        //ImGui::PopStyleColor(3);
         ImGui::EndMainMenuBar();
     }
 

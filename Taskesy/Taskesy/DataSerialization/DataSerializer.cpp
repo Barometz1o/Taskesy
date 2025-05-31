@@ -5,7 +5,7 @@
 
 #include "DataSerializer.h"
 
-void DataSerializer::Serialize(ImVec4* main_color, size_t taskesyRows, size_t taskesyColumns, std::vector<const char*> columnNames, std::vector<const char*> text, const std::string& filepath)
+void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taskesyRows, size_t taskesyColumns, std::vector<const char*> columnNames, std::vector<const char*> text, const std::string& filepath)
 {
 	ImVec4 mainColor = *main_color;
 	YAML::Emitter out;
@@ -17,6 +17,12 @@ void DataSerializer::Serialize(ImVec4* main_color, size_t taskesyRows, size_t ta
 	out << YAML::Key << "Main Color";
 	out << YAML::Value << YAML::Flow << YAML::BeginSeq;
 	out << mainColor.x << mainColor.y << mainColor.z << mainColor.w;				// Alpha is not needed but still useful to have it
+	out << YAML::Value << YAML::EndSeq;
+
+	// Main box color
+	out << YAML::Key << "Main Color";
+	out << YAML::Value << YAML::Flow << YAML::BeginSeq;
+	out << boxColor.x << boxColor.y << boxColor.z << boxColor.w;				// Alpha is not needed but still useful to have it
 	out << YAML::Value << YAML::EndSeq;
 
 	// Number of rows
@@ -52,7 +58,7 @@ void DataSerializer::Serialize(ImVec4* main_color, size_t taskesyRows, size_t ta
 	fout << out.c_str();
 }
 
-void DataSerializer::Deserialize(ImVec4* main_color, size_t* taskesyRows, size_t* taskesyColumns, std::vector<const char*>* columnNames, std::vector<const char*>* text, const std::string& filepath)
+void DataSerializer::Deserialize(ImVec4* main_color, ImVec4* boxColor, size_t* taskesyRows, size_t* taskesyColumns, std::vector<const char*>* columnNames, std::vector<const char*>* text, const std::string& filepath)
 {
 
 }

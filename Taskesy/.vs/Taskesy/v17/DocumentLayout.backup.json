@@ -3,14 +3,7 @@
   "WorkspaceRootPath": "E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\Taskesy\\DataSerialization\\DataSerializer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|solutionrelative:Taskesy\\DataSerialization\\DataSerializer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\Taskesy\\externals\\ImGui\\imgui_demo.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\Taskesy\\externals\\ImGui\\imgui_widgets.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\Taskesy\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -21,15 +14,22 @@
       "RelativeMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|solutionrelative:Taskesy\\DataSerialization\\DataSerializer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\Taskesy\\Utils\\PlatformUtils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|solutionrelative:Taskesy\\Utils\\PlatformUtils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\Taskesy\\Utils\\PlatformWindowsUtils.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|solutionrelative:Taskesy\\Utils\\PlatformWindowsUtils.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\Taskesy\\Utils\\PlatformUtils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|solutionrelative:Taskesy\\Utils\\PlatformUtils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\Taskesy\\DataSerialization\\DataSerializer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|solutionrelative:Taskesy\\DataSerialization\\DataSerializer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\Taskesy\\externals\\ImGui\\imgui.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B07CE1A1-5C4F-4066-9A58-A508B9743737}|Taskesy\\Taskesy.vcxproj|E:\\WORKING\\Taskesy\\Taskesy\\externals\\ImGui\\imgui_widgets.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -39,7 +39,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Bookmark",
@@ -51,20 +51,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 7,
               "Title": "imgui_widgets.cpp",
               "DocumentMoniker": "E:\\WORKING\\Taskesy\\Taskesy\\externals\\ImGui\\imgui_widgets.cpp",
               "RelativeDocumentMoniker": "..\\externals\\ImGui\\imgui_widgets.cpp",
               "ToolTip": "E:\\WORKING\\Taskesy\\Taskesy\\externals\\ImGui\\imgui_widgets.cpp",
               "RelativeToolTip": "..\\externals\\ImGui\\imgui_widgets.cpp",
-              "ViewState": "AgIAAFAVAAAAAAAAAADgv2QVAAA5AAAAAAAAAA==",
+              "ViewState": "AgIAAKIVAAAAAAAAAAAtwLQVAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-31T10:37:35.386Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T10:37:35.386Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 6,
               "Title": "imgui.h",
               "DocumentMoniker": "E:\\WORKING\\Taskesy\\Taskesy\\externals\\ImGui\\imgui.h",
               "RelativeDocumentMoniker": "..\\externals\\ImGui\\imgui.h",
@@ -76,33 +75,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "DataSerializer.cpp",
               "DocumentMoniker": "E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\Taskesy\\DataSerialization\\DataSerializer.cpp",
               "RelativeDocumentMoniker": "Taskesy\\DataSerialization\\DataSerializer.cpp",
               "ToolTip": "E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\Taskesy\\DataSerialization\\DataSerializer.cpp",
               "RelativeToolTip": "Taskesy\\DataSerialization\\DataSerializer.cpp",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAD4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-28T14:04:13.139Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-28T14:04:13.139Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "DataSerializer.h",
               "DocumentMoniker": "E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\Taskesy\\DataSerialization\\DataSerializer.h",
               "RelativeDocumentMoniker": "Taskesy\\DataSerialization\\DataSerializer.h",
               "ToolTip": "E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\Taskesy\\DataSerialization\\DataSerializer.h",
               "RelativeToolTip": "Taskesy\\DataSerialization\\DataSerializer.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAC0AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-28T14:04:11.441Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-28T14:04:11.441Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "PlatformUtils.h",
               "DocumentMoniker": "E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\Taskesy\\Utils\\PlatformUtils.h",
               "RelativeDocumentMoniker": "Taskesy\\Utils\\PlatformUtils.h",
@@ -110,12 +107,11 @@
               "RelativeToolTip": "Taskesy\\Utils\\PlatformUtils.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-28T14:03:21.268Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-28T14:03:21.268Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 3,
               "Title": "PlatformWindowsUtils.cpp",
               "DocumentMoniker": "E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\Taskesy\\Utils\\PlatformWindowsUtils.cpp",
               "RelativeDocumentMoniker": "Taskesy\\Utils\\PlatformWindowsUtils.cpp",
@@ -123,31 +119,29 @@
               "RelativeToolTip": "Taskesy\\Utils\\PlatformWindowsUtils.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-28T14:03:24.963Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-28T14:03:24.963Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "main.cpp",
               "DocumentMoniker": "E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\Taskesy\\main.cpp",
               "RelativeDocumentMoniker": "Taskesy\\main.cpp",
               "ToolTip": "E:\\WORKING\\Taskesy\\Taskesy\\Taskesy\\Taskesy\\main.cpp",
               "RelativeToolTip": "Taskesy\\main.cpp",
-              "ViewState": "AgIAALsBAAAAAAAAAAAAAPsBAAAMAAAAAAAAAA==",
+              "ViewState": "AgIAAMQBAAAAAAAAAAAAAM4BAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-28T14:03:15.51Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-28T14:03:15.51Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "imgui_demo.cpp",
               "DocumentMoniker": "E:\\WORKING\\Taskesy\\Taskesy\\externals\\ImGui\\imgui_demo.cpp",
               "RelativeDocumentMoniker": "..\\externals\\ImGui\\imgui_demo.cpp",
               "ToolTip": "E:\\WORKING\\Taskesy\\Taskesy\\externals\\ImGui\\imgui_demo.cpp",
               "RelativeToolTip": "..\\externals\\ImGui\\imgui_demo.cpp",
-              "ViewState": "AgIAALwBAAAAAAAAAADgv4gBAAAlAAAAAAAAAA==",
+              "ViewState": "AgIAALciAAAAAAAAAAAowMUiAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-05-28T14:03:38.266Z",
               "EditorCaption": ""

@@ -458,8 +458,8 @@ int main(int, char**)
     bool show_taskesy_window = true;
     bool show_demo_window = true;
 
-    // Taskesy Colour
-    ImVec4 clear_color = ImVec4(0.28f, 0.13f, 0.13f, 1.0f);
+    // Taskesy Color
+    ImVec4 clear_color(0.28f, 0.13f, 0.13f, 1.0f);
     ImVec4* ptr_color = &clear_color;
 
     // Set Up Icon

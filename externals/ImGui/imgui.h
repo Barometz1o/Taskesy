@@ -348,7 +348,7 @@ namespace ImGui
     IMGUI_API void          TaskesyDeleteColumn();                                                                                      // Taskesy delete column
     IMGUI_API void          TaskesyAddRow();                                                                                            // Taskesy add row
     IMGUI_API void          TaskesyDeleteRow();                                                                                         // Taskesy delete row
-    IMGUI_API void          ShowTaskesyWindow(GLFWwindow* window, bool* p_open = NULL, int* ptrCurrentBoxID = NULL, int* ptrCurrentBoxColumn = NULL);       // Show Taskesy Window
+    IMGUI_API void          ShowTaskesyWindow(GLFWwindow* window, bool* p_open = NULL, int* ptrCurrentBoxID = NULL, int* ptrCurrentBoxColumn = NULL, ImVec4* ptr_color = NULL);       // Show Taskesy Window
     IMGUI_API void          ShowDemoWindow(bool* p_open = NULL);        // create Demo window. demonstrate most ImGui features. call this to learn about the library! try to make it always available in your application!
     IMGUI_API void          ShowMetricsWindow(bool* p_open = NULL);     // create Metrics/Debugger window. display Dear ImGui internals: windows, draw commands, various internal state, etc.
     IMGUI_API void          ShowDebugLogWindow(bool* p_open = NULL);    // create Debug Log window. display a simplified log of important dear imgui events.

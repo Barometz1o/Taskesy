@@ -460,6 +460,7 @@ int main(int, char**)
 
     // Taskesy Colour
     ImVec4 clear_color = ImVec4(0.28f, 0.13f, 0.13f, 1.00f);
+    ImVec4* ptr_color = &clear_color;
 
     // Set Up Icon
     setWindowIcon(window, "../../resources/icon/taskesy_icon.png");
@@ -504,7 +505,7 @@ int main(int, char**)
         ImGui::NewFrame();
 
         if (show_taskesy_window)
-            ImGui::ShowTaskesyWindow(window, &show_taskesy_window, ptrCurrentBoxID, ptrCurrentBoxColumn);
+            ImGui::ShowTaskesyWindow(window, &show_taskesy_window, ptrCurrentBoxID, ptrCurrentBoxColumn, ptr_color);
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)

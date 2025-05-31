@@ -140,7 +140,8 @@ Index of this file:
 #include <string>
 
 // Taskesy
-#include <Taskesy/Utils/PlatformUtils.h>
+#include "Taskesy/Utils/PlatformUtils.h"
+#include "Taskesy/DataSerialization/DataSerializer.h"
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1800
 #include <inttypes.h>       // PRId64/PRIu64, not avail in some MinGW headers.
@@ -350,7 +351,7 @@ struct ImGuiDemoWindowData
 // Demonstrate most Dear ImGui features (this is big function!)
 // You may execute this function to experiment with the UI and understand what it does.
 // You may then search for keywords in the code when you are interested by a specific feature.
-void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentBoxID, int* ptrCurrentBoxColumn)
+void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentBoxID, int* ptrCurrentBoxColumn, ImVec4* ptr_color)
 {
     // Exceptionally add an extra assert here for people confused about initial Dear ImGui setup
     // Most functions would normally just assert/crash if the context is missing.
@@ -8799,7 +8800,7 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
                 std::string filePath = FileDialogs::SaveFile("Taskesy (*.todo)\0*.todo\0", window);
                 if (!filePath.empty())
                 {
-
+                    DataSerializer serializer();
                 }
                 ImGui::EndMenu();
             }

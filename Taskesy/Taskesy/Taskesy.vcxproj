@@ -105,13 +105,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:/VulkanSDK/1.4.304.1/Include;$(SolutionDir)/../externals/GLFW/include;$(SolutionDir)/../externals/ImGui;$(SolutionDir)/../externals/sources;$(SolutionDir)/../externals/stb;$(SolutionDir)/../externals/comdlg32;$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);C:/VulkanSDK/1.4.304.1/Include;$(SolutionDir)/../externals/GLFW/include;$(SolutionDir)/../externals/ImGui;$(SolutionDir)/../externals/sources;$(SolutionDir)/../externals/stb;$(SolutionDir)/../externals/comdlg32;$(SolutionDir)/../externals/yaml-cpp/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:/VulkanSDK/1.4.304.1/Lib;$(SolutionDir)/../externals/GLFW/lib-vc2022</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;Gdi32.lib;comdlg32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/VulkanSDK/1.4.304.1/Lib;$(SolutionDir)/../externals/GLFW/lib-vc2022;$(SolutionDir)/../externals/yaml-cpp/lib-debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;Gdi32.lib;comdlg32.lib;yaml-cppd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -122,15 +122,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:/VulkanSDK/1.4.304.1/Include;$(SolutionDir)/../externals/GLFW/include;$(SolutionDir)/../externals/ImGui;$(SolutionDir)/../externals/sources;$(SolutionDir)/../externals/stb;$(SolutionDir)/../externals/comdlg32;$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);C:/VulkanSDK/1.4.304.1/Include;$(SolutionDir)/../externals/GLFW/include;$(SolutionDir)/../externals/ImGui;$(SolutionDir)/../externals/sources;$(SolutionDir)/../externals/stb;$(SolutionDir)/../externals/comdlg32;$(SolutionDir)/../externals/yaml-cpp/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:/VulkanSDK/1.4.304.1/Lib;$(SolutionDir)/../externals/GLFW/lib-vc2022</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;Gdi32.lib;comdlg32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/VulkanSDK/1.4.304.1/Lib;$(SolutionDir)/../externals/GLFW/lib-vc2022;$(SolutionDir)/../externals/yaml-cpp/lib-release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;Gdi32.lib;comdlg32.lib;yaml-cpp.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -141,6 +141,7 @@
     <ClCompile Include="..\..\externals\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="..\..\externals\sources\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\..\externals\sources\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="DataSerialization\DataSerializer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Utils\PlatformWindowsUtils.cpp" />
   </ItemGroup>
@@ -153,6 +154,7 @@
     <ClInclude Include="..\..\externals\ImGui\imstb_truetype.h" />
     <ClInclude Include="..\..\externals\sources\imgui_impl_glfw.h" />
     <ClInclude Include="..\..\externals\sources\imgui_impl_vulkan.h" />
+    <ClInclude Include="DataSerialization\DataSerializer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Utils\PlatformUtils.h" />
   </ItemGroup>

@@ -8906,7 +8906,8 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
                 std::string filePath = FileDialogs::OpenFile("Taskesy (*.todo)\0*.todo\0", window);
                 if (!filePath.empty())
                 {
-
+                    DataSerializer serializer;
+                    serializer.Deserialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, filePath);
                 }
             }
 

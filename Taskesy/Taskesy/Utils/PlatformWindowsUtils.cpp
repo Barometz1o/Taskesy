@@ -41,8 +41,10 @@ std::string FileDialogs::SaveFile(const char* filter, GLFWwindow* window)
     ofn.nFilterIndex = 1;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
+    std::string extension = ".todo";
+
     if (GetSaveFileNameA(&ofn))
-        return ofn.lpstrFile;
+        return (std::string(ofn.lpstrFile)+extension).c_str(); //ofn.lpstrFile;
 
     return std::string();
 }

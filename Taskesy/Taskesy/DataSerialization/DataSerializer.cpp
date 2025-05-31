@@ -10,6 +10,9 @@ void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taske
 	ImVec4 mainColor = *main_color;
 	YAML::Emitter out;
 
+	// Taskesy file identification
+	out << "Taskesy";
+
 	// Taskesy Globals
 	out << YAML::BeginMap;
 
@@ -20,9 +23,9 @@ void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taske
 	out << YAML::Value << YAML::EndSeq;
 
 	// Main box color
-	out << YAML::Key << "Main Color";
+	out << YAML::Key << "Box Color";
 	out << YAML::Value << YAML::Flow << YAML::BeginSeq;
-	out << boxColor.x << boxColor.y << boxColor.z << boxColor.w;				// Alpha is not needed but still useful to have it
+	out << boxColor.x << boxColor.y << boxColor.z << boxColor.w;					// Alpha is not needed but still useful to have it
 	out << YAML::Value << YAML::EndSeq;
 
 	// Number of rows
@@ -58,7 +61,23 @@ void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taske
 	fout << out.c_str();
 }
 
-void DataSerializer::Deserialize(ImVec4* main_color, ImVec4* boxColor, size_t* taskesyRows, size_t* taskesyColumns, std::vector<const char*>* columnNames, std::vector<const char*>* text, const std::string& filepath)
+void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& taskesyRows, int& taskesyColumns, std::vector<const char*>& columnNames, std::vector<const char*>& text, const std::string& filepath)
 {
+	std::ifstream stream(filepath);
+	std::stringstream strStream;
+	strStream << stream.rdbuf();
+
+	YAML::Node data = YAML::Load(strStream.str());
+	if (!data["Taskesy"])
+		return;
+
+	auto mColors = data["Main Color"];
+	if (mColors)
+	{
+		for (auto color : mColors)
+		{
+
+		}
+	}
 
 }

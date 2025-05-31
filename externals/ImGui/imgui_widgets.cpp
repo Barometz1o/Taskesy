@@ -5471,7 +5471,7 @@ void ImGui::DebugNodeInputTextState(ImGuiInputTextState* state)
 
 bool ImGui::ColorEdit3(const char* label, float col[3], ImGuiColorEditFlags flags)
 {
-    return ColorEdit4(label, col, flags | ImGuiColorEditFlags_NoAlpha);
+    return ColorEdit4(label, col, flags | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_PickerHueWheel);
 }
 
 static void ColorEditRestoreH(const float* col, float* H)

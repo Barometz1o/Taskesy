@@ -252,6 +252,10 @@ static bool columnPopUp = false;
 // Box text
 std::vector<const char*> text;
 
+// Color
+ImVec4* ptrColor;
+bool colorWindow = false;
+
 // Forward Declarations
 struct ImGuiDemoWindowData;
 static void ShowExampleAppMainMenuBar(GLFWwindow* window);
@@ -353,6 +357,19 @@ struct ImGuiDemoWindowData
 // You may then search for keywords in the code when you are interested by a specific feature.
 void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentBoxID, int* ptrCurrentBoxColumn, ImVec4* ptr_color)
 {
+    // Setting Taskesy Colour if we want to change It
+    ptrColor = ptr_color;
+    if (colorWindow)
+    {
+        ImGui::Begin("Background Color", nullptr, 
+            ImGuiWindowFlags_NoTitleBar);
+        ImGui::ColorEdit3("Background Color", (float*)ptrColor);
+        if (ImGui::Button("Accept")) {
+            colorWindow = false;
+        }
+        ImGui::End();
+    }
+
     // Exceptionally add an extra assert here for people confused about initial Dear ImGui setup
     // Most functions would normally just assert/crash if the context is missing.
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing Dear ImGui context. Refer to examples app!");
@@ -372,8 +389,8 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
         ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoBringToFrontOnFocus |
-        ImGuiWindowFlags_NoNavFocus /* |
-        ImGuiWindowFlags_NoBackground*/); // optional, make it transparent
+        ImGuiWindowFlags_NoNavFocus |
+        ImGuiWindowFlags_NoBackground); // optional, make it transparent
 
     // Menu bar
     ShowExampleAppMainMenuBar(window);
@@ -401,9 +418,12 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
     };
     static int mode = 0;
 
+    // TODO
+    /*
     if (ImGui::RadioButton("Swap", mode == Mode_Swap)) { mode = Mode_Swap; } ImGui::SameLine();
     if (ImGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } ImGui::SameLine();
     if (ImGui::RadioButton("Copy", mode == Mode_Copy)) { mode = Mode_Copy; }
+    */
 
     // Make the UI compact because there are so many fields
     // In my case does not work due to the rendering window.
@@ -512,8 +532,10 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
 
                         // Display preview (could be anything, e.g. when dragging an image we could decide to display
                         // the filename and a small preview of the image, etc.)
-                        if (mode == Mode_Copy) { ImGui::Text("Copy %s", text[ID]); }
-                        if (mode == Mode_Move) { ImGui::Text("Move %s", text[ID]); }
+                        
+                        // TODO
+                        //if (mode == Mode_Copy) { ImGui::Text("Copy %s", text[ID]); }
+                        //if (mode == Mode_Move) { ImGui::Text("Move %s", text[ID]); }
                         if (mode == Mode_Swap) { ImGui::Text("Swap %s", text[ID]); }
                         ImGui::EndDragDropSource();
                     }
@@ -523,6 +545,9 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                         {
                             IM_ASSERT(payload->DataSize == sizeof(int));
                             int payload_n = *(const int*)payload->Data;
+
+                            // TODO
+                            /*
                             if (mode == Mode_Copy)
                             {
                                 text[ID] = text[payload_n];
@@ -532,6 +557,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                                 text[ID] = text[payload_n];
                                 text[payload_n] = "";
                             }
+                            */
                             if (mode == Mode_Swap)
                             {
                                 const char* tmp = text[ID];
@@ -8784,25 +8810,34 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
     if (ImGui::BeginMainMenuBar())
     {
         if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("New", "Ctrl+N")) {
-                ImGui::EndMenu();
+            if (ImGui::MenuItem("Change Colour", "Ctrl+C")) {
+                colorWindow = true;
             }
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("New", "Ctrl+N")) {
+            }
+
+            ImGui::Separator();
+
             if (ImGui::MenuItem("Open", "Ctrl+O")) {
                 std::string filePath = FileDialogs::OpenFile("Taskesy (*.todo)\0*.todo\0", window);
                 if (!filePath.empty())
                 {
 
                 }
-
-                ImGui::EndMenu();
             }
+
+            ImGui::Separator();
+
             if (ImGui::MenuItem("Save As...", "Ctrl+S")) {
                 std::string filePath = FileDialogs::SaveFile("Taskesy (*.todo)\0*.todo\0", window);
                 if (!filePath.empty())
                 {
-                    DataSerializer serializer();
+                    DataSerializer serializer;
+                    serializer.Serialize(ptrColor, taskesyRows, taskesyColumns, columnNames, text, filePath);
                 }
-                ImGui::EndMenu();
             }
             ImGui::EndMenu();
         }
@@ -8821,6 +8856,8 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
             {
                 if (ImGui::MenuItem(columnNames[column]))
                     currentColumn = column;
+                if (column != taskesyColumns - 1)
+                    ImGui::Separator();
             }
             ImGui::EndMenu();
         }
@@ -8848,6 +8885,8 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
                     showColumn[box] = true;
                     columnPopUp = true;
                 }
+                if (box != taskesyColumns - 1)
+                    ImGui::Separator();
             }
             ImGui::EndMenu();
         }

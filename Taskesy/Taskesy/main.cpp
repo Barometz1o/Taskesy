@@ -19,6 +19,7 @@
 #include <iostream>
 #include <stdio.h>          // printf, fprintf
 #include <stdlib.h>         // abort
+//#include <windows.h>        // RELEASE
 //#define GLFW_INCLUDE_NONE
 //#define GLFW_INCLUDE_VULKAN
 //#include <GLFW/glfw3.h>
@@ -374,7 +375,8 @@ void setWindowIcon(GLFWwindow* window, const char* iconPath) {
 }
 
 // Main code
-int main(int, char**)
+int main(int, char**)                                                                               // DEBUG
+//int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)   // RELEASE
 {
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
@@ -456,14 +458,15 @@ int main(int, char**)
 
     // Our state
     bool show_taskesy_window = true;
-    bool show_demo_window = true;
+    bool show_demo_window = false;
 
     // Taskesy Color
     ImVec4 clear_color(0.28f, 0.13f, 0.13f, 1.0f);
     ImVec4* ptr_color = &clear_color;
 
     // Set Up Icon
-    setWindowIcon(window, "../../resources/icon/taskesy_icon.png");
+    setWindowIcon(window, "../../resources/icon/taskesy_icon.png");           //DEBUG
+    //setWindowIcon(window, "./icon/taskesy_icon.png");                           // Release
 
     // Current box that we are editing
     int currentBoxID = -1;

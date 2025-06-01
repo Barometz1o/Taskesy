@@ -9023,6 +9023,17 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
             ImGui::EndMenu();
         }
 
+        // Credits
+        if (ImGui::BeginMenu("Credits"))
+        {
+            ImGui::Text("Made entirely by:");
+            ImGui::SameLine();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 128, 128, 255));
+            ImGui::Text(u8"Raúl Velázquez Gómez");
+            ImGui::PopStyleColor();
+            ImGui::EndMenu();
+        }
+
         // Performance
             // Performance Menu
         /*

@@ -10,11 +10,12 @@ void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taske
 	ImVec4 mainColor = *main_color;
 	YAML::Emitter out;
 
-	// Taskesy file identification
-	out << "Taskesy";
-
 	// Taskesy Globals
 	out << YAML::BeginMap;
+
+	// Taskesy file identification
+	out << YAML::Key << "Taskesy";
+	out << YAML::Value << true;
 
 	// Main backgroud color
 	out << YAML::Key << "Main Color";
@@ -71,13 +72,46 @@ void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& task
 	if (!data["Taskesy"])
 		return;
 
-	auto mColors = data["Main Color"];
-	if (mColors)
-	{
-		for (auto color : mColors)
-		{
+	// Color
+	if (!data["Main Color"])
+		return;
+	*main_color = ImVec4(data["Main Color"][0].as<float>(), data["Main Color"][1].as<float>(), data["Main Color"][2].as<float>(), data["Main Color"][3].as<float>());
 
+	if (!data["Box Color"])
+		return;
+	boxColor = ImVec4(data["Box Color"][0].as<float>(), data["Box Color"][1].as<float>(), data["Box Color"][2].as<float>(), data["Box Color"][3].as<float>());
+
+	// Table
+	if (!data["Rows"])
+		return;
+	taskesyRows = data["Rows"].as<int>();
+
+	if (!data["Columns"])
+		return;
+	taskesyColumns = data["Columns"].as<int>();
+
+	if (!data["Column Names"])
+		return;
+
+	if (!data["Box Text"])
+		return;
+
+	// If everything is fine, we load the table
+	while (!columnNames.empty())
+		columnNames.pop_back();
+	while (!text.empty())
+		text.pop_back();
+
+	std::string columnName;
+	std::string boxText;
+	for (int i = 0; i < taskesyColumns; ++i)
+	{
+		columnName = data["Column Names"][i].as<std::string>();
+		columnNames.push_back(_strdup(columnName.c_str()));
+		for (int j = 0; j < taskesyRows; ++j)
+		{
+			boxText = data["Box Text"][j * taskesyColumns + i].as<std::string>();
+			text.push_back(_strdup(boxText.c_str()));
 		}
 	}
-
 }

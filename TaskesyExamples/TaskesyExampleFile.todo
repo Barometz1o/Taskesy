@@ -1,0 +1,23 @@
+Taskesy: true
+Main Color: [0.49650264, 0.23205294, 0.7502433, 1]
+Box Color: [0.58255064, 0.4, 0.8, 0.8]
+Rows: 3
+Columns: 4
+Column Names:
+  - TestColumn1
+  - TestColumn2
+  - TestColumn3
+  - TestColumn4
+Box Text:
+  - Box1
+  - Box11
+  - Box111
+  - Box1111
+  - Box2
+  - Box22
+  - Box222
+  - Box2222
+  - Box3
+  - Box33
+  - Box333
+  - Box3333

@@ -523,8 +523,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
             {
                 // We draw the box if it has text or if it is empty but we want a box from the menu
                 //if (text[row * taskesyColumns + column] != "None" || text[row * taskesyColumns + column] == "None" && showColumn[column] == true && row == numberColumn[column])
-                bool letMeSee = text[row * taskesyColumns + column] != "None";
-                if (text[row * taskesyColumns + column] != "None" || (showColumn[column] && row == numberColumn[column]))
+                if ((text[row * taskesyColumns + column] != "None") || (showColumn[column] && row == numberColumn[column]))
                 {
                     ID = row * taskesyColumns + column;
                     ImGui::PushID(ID);

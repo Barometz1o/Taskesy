@@ -104,14 +104,18 @@ void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& task
 
 	std::string columnName;
 	std::string boxText;
+
+	// Column Names
 	for (int i = 0; i < taskesyColumns; ++i)
 	{
 		columnName = data["Column Names"][i].as<std::string>();
 		columnNames.push_back(_strdup(columnName.c_str()));
-		for (int j = 0; j < taskesyRows; ++j)
-		{
-			boxText = data["Box Text"][j * taskesyColumns + i].as<std::string>();
-			text.push_back(_strdup(boxText.c_str()));
-		}
+	}
+
+	// Text boxes
+	for (int i = 0; i < taskesyColumns * taskesyRows; ++i)
+	{
+		boxText = data["Box Text"][i].as<std::string>();
+		text.push_back(_strdup(boxText.c_str()));;
 	}
 }

@@ -115,7 +115,12 @@ void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& task
 	// Text boxes
 	for (int i = 0; i < taskesyColumns * taskesyRows; ++i)
 	{
-		boxText = data["Box Text"][i].as<std::string>();
-		text.push_back(_strdup(boxText.c_str()));;
+		if (data["Box Text"][i].as<std::string>() == "None")
+			text.push_back("None");
+		else
+		{
+			boxText = data["Box Text"][i].as<std::string>();
+			text.push_back(_strdup(boxText.c_str()));
+		}
 	}
 }

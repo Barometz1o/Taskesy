@@ -523,6 +523,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
             {
                 // We draw the box if it has text or if it is empty but we want a box from the menu
                 //if (text[row * taskesyColumns + column] != "None" || text[row * taskesyColumns + column] == "None" && showColumn[column] == true && row == numberColumn[column])
+                bool letMeSee = text[row * taskesyColumns + column] != "None";
                 if (text[row * taskesyColumns + column] != "None" || (showColumn[column] && row == numberColumn[column]))
                 {
                     ID = row * taskesyColumns + column;
@@ -8853,7 +8854,7 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
 
             ImGui::Separator();
 
-            if (ImGui::MenuItem("Change Box Color", "Ctrl+C")) {
+            if (ImGui::MenuItem("Change Box Color", "Ctrl+B")) {
                 boxColorWindow = true;
             }
 
@@ -8906,8 +8907,27 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
                 std::string filePath = FileDialogs::OpenFile("Taskesy (*.todo)\0*.todo\0", window);
                 if (!filePath.empty())
                 {
+                    // Clean values to not get unexpected results
+                    while (!columnNames.empty())
+                    {
+                        columnNames.pop_back();
+                        showColumn.pop_back();
+                        numberColumn.pop_back();
+                    }
+
+                    while (!text.empty())
+                        text.pop_back();
+
+                    // We deserialize Taskesy
                     DataSerializer serializer;
                     serializer.Deserialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, filePath);
+
+                    // We initialize auxiliars after reading the proper data
+                    showColumn.resize(taskesyColumns, false);
+                    numberColumn.resize(taskesyColumns, 0);
+
+                    currentColumn = -1;
+                    columnPopUp = false;
                 }
             }
 
@@ -8917,6 +8937,7 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
                 std::string filePath = FileDialogs::SaveFile("Taskesy (*.todo)\0*.todo\0", window);
                 if (!filePath.empty())
                 {
+                    // We serialize Taskesy
                     DataSerializer serializer;
                     serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, filePath);
                 }
@@ -9022,64 +9043,103 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 
-        // Older Top Bar Menu
-
-        /*
-        if (ImGui::BeginMenu("Add"))
-        {
-            // Add columns
-            if (ImGui::MenuItem("Add Column")) { taskesyColumns++; }
-            if (ImGui::MenuItem("Delete Column")) {
-                if (taskesyColumns > 1)
-                    taskesyColumns--;
-            }
-            ImGui::Separator();
-            // Add rows
-            if (ImGui::MenuItem("Add Row")) { taskesyRows++; }
-            if (ImGui::MenuItem("Delete Row")) {
-                if (taskesyRows > 1)
-                    taskesyRows--;
-            }
-            ImGui::Separator();
-            // Add Boxes
-            if (ImGui::BeginMenu("Boxes"))
-            {
-                for (int box = 0; box < taskesyColumns; ++box)
-                {
-                    if (ImGui::MenuItem(columnNames[box]))
-                        showColumn[box] = true;
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenu();
-        }
-        */
-
         //ImGui::PopStyleColor(3);
         ImGui::EndMainMenuBar();
     }
 
-    /* Dear ImGui Example
-    if (ImGui::BeginMainMenuBar())
-    {
-        if (ImGui::BeginMenu("File"))
-        {
-            ShowExampleMenuFile();
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Edit"))
-        {
-            if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-            if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {} // Disabled item
-            ImGui::Separator();
-            if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-            if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-            if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-            ImGui::EndMenu();
-        }
-        ImGui::EndMainMenuBar();
+    // Shortcuts
+
+    // Background Color
+    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_C)) {
+        colorWindow = true;
     }
-    */
+
+    // Box Color
+    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_B)) {
+        boxColorWindow = true;
+    }
+
+    // New File
+    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_N)) {
+        // Columns and rows
+        taskesyRows = 3;
+        taskesyColumns = 1;
+
+        // Because the names are incremental
+        while (!columnNames.empty())
+        {
+            columnNames.pop_back();
+            showColumn.pop_back();
+            numberColumn.pop_back();
+        }
+
+        for (size_t i = 0; i < taskesyColumns; ++i)
+        {
+            ImGui::TaskesyAddColumn();
+        }
+
+        showColumn.resize(taskesyColumns, false);
+        numberColumn.resize(taskesyColumns, 0);
+
+        while (!text.empty())
+        {
+            text.pop_back();
+        }
+
+        text.resize(taskesyColumns * taskesyRows, "None");
+        currentColumn = -1;
+        columnPopUp = false;
+
+        // Color
+        ImVec4 clear_color(0.28f, 0.13f, 0.13f, 1.0f);
+        *ptrColor = clear_color;
+        colorWindow = false;
+
+        // Box color
+        boxColor = ImVec4(0.8f, 0.4f, 0.4f, 0.8f);
+        ptrBoxColor = &boxColor;
+        boxColorWindow = false;
+    }
+
+    // Open File
+    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_O)) {
+        std::string filePath = FileDialogs::OpenFile("Taskesy (*.todo)\0*.todo\0", window);
+        if (!filePath.empty())
+        {
+            // Clean values to not get unexpected results
+            while (!columnNames.empty())
+            {
+                columnNames.pop_back();
+                showColumn.pop_back();
+                numberColumn.pop_back();
+            }
+
+            while (!text.empty())
+                text.pop_back();
+
+            // We deserialize Taskesy
+            DataSerializer serializer;
+            serializer.Deserialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, filePath);
+
+            // We initialize auxiliars after reading the proper data
+            showColumn.resize(taskesyColumns, false);
+            numberColumn.resize(taskesyColumns, 0);
+
+            currentColumn = -1;
+            columnPopUp = false;
+        }
+    }
+
+    // Save File
+    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_S)) {
+        std::string filePath = FileDialogs::SaveFile("Taskesy (*.todo)\0*.todo\0", window);
+        if (!filePath.empty())
+        {
+            // We serialize Taskesy
+            DataSerializer serializer;
+            serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, filePath);
+        }
+    }
 }
 
 // Note that shortcuts are currently provided for display only

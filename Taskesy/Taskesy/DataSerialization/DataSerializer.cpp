@@ -5,7 +5,7 @@
 
 #include "DataSerializer.h"
 
-void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taskesyRows, size_t taskesyColumns, std::vector<const char*> columnNames, std::vector<const char*> text, const std::string& filepath)
+void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taskesyRows, size_t taskesyColumns, std::vector<const char*> columnNames, std::vector<const char*> text, std::vector<int> numberColumn, const std::string& filepath)
 {
 	ImVec4 mainColor = *main_color;
 	YAML::Emitter out;
@@ -46,14 +46,27 @@ void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taske
 	}
 	out << YAML::Value << YAML::EndSeq;
 
+	// Number of Boxes per Column
+	out << YAML::Key << "Number of Boxes per Column";
+	out << YAML::Value << YAML::BeginSeq;
+	for (int i = 0; i < taskesyColumns; ++i)
+	{
+		out << numberColumn[i];
+	}
+	out << YAML::Value << YAML::EndSeq;
+
 	// Box text
 	out << YAML::Key << "Box Text";
 	out << YAML::Value << YAML::BeginSeq;
 
-	for (int i = 0; i < taskesyColumns*taskesyRows; ++i)
+	for (int column = 0; column < taskesyColumns; column++)
 	{
-		out << text[i];
+		for (int row = 0; row < taskesyRows; row++)
+		{
+			out << text[row * taskesyColumns + column];
+		}
 	}
+
 	out << YAML::Value << YAML::EndSeq;
 	out << YAML::EndMap;
 
@@ -62,7 +75,7 @@ void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taske
 	fout << out.c_str();
 }
 
-void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& taskesyRows, int& taskesyColumns, std::vector<const char*>& columnNames, std::vector<const char*>& text, const std::string& filepath)
+void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& taskesyRows, int& taskesyColumns, std::vector<const char*>& columnNames, std::vector<const char*>& text, std::vector<int>& numberColumn, const std::string& filepath)
 {
 	std::ifstream stream(filepath);
 	std::stringstream strStream;
@@ -93,16 +106,22 @@ void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& task
 	if (!data["Column Names"])
 		return;
 
+	if (!data["Number of Boxes per Column"])
+		return;
+
 	if (!data["Box Text"])
 		return;
 
 	// If everything is fine, we load the table
 	while (!columnNames.empty())
 		columnNames.pop_back();
+	while (!numberColumn.empty())
+		numberColumn.pop_back();
 	while (!text.empty())
 		text.pop_back();
 
 	std::string columnName;
+	int numCols;
 	std::string boxText;
 
 	// Column Names
@@ -110,17 +129,22 @@ void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& task
 	{
 		columnName = data["Column Names"][i].as<std::string>();
 		columnNames.push_back(_strdup(columnName.c_str()));
+		numCols = data["Number of Boxes per Column"][i].as<int>();
+		numberColumn.push_back(numCols);
 	}
 
 	// Text boxes
-	for (int i = 0; i < taskesyColumns * taskesyRows; ++i)
+	for (int column = 0; column < taskesyColumns; column++)
 	{
-		if (data["Box Text"][i].as<std::string>() == "None")
-			text.push_back("None");
-		else
+		for (int row = 0; row < taskesyRows; row++)
 		{
-			boxText = data["Box Text"][i].as<std::string>();
-			text.push_back(_strdup(boxText.c_str()));
+			if (data["Box Text"][row * taskesyColumns + column].as<std::string>() == "None")
+				text.push_back("None");
+			else
+			{
+				boxText = data["Box Text"][row * taskesyColumns + column].as<std::string>();
+				text.push_back(_strdup(boxText.c_str()));
+			}
 		}
 	}
 }

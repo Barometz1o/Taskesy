@@ -241,8 +241,8 @@ Index of this file:
 int taskesyColumns = 1;
 int taskesyRows = 3;
 size_t ID;
-std::vector<bool> showColumn;               // Initializing false
-std::vector<int> numberColumn;           // Counting filled boxes per column
+std::vector<bool> showColumn;                               // Initializing false
+std::vector<int> numberColumn(taskesyColumns, 0);           // Counting filled boxes per column and Resize boxes per column vector
 
 // Column Names
 std::vector<const char*> columnNames;
@@ -376,7 +376,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
         ImGui::Begin("Background Color", nullptr, 
             ImGuiWindowFlags_NoTitleBar);
         ImGui::ColorEdit3("Background Color", (float*)ptrColor);
-        if (ImGui::Button("Accept")) {
+        if (ImGui::Button("Accept") || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
             colorWindow = false;
         }
         ImGui::End();
@@ -394,7 +394,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
         ImGui::Begin("Box Color", nullptr,
             ImGuiWindowFlags_NoTitleBar);
         ImGui::ColorEdit3("Box Color", (float*)ptrBoxColor);
-        if (ImGui::Button("Accept")) {
+        if (ImGui::Button("Accept") || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
             boxColorWindow = false;
             changedColor = true;
         }
@@ -432,10 +432,6 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
 
     // Resize bool column vector
     showColumn.resize(taskesyColumns);
-
-    // Resize boxes per column vector
-    numberColumn.resize(taskesyColumns, 0);
-
 
     // To draw on main
     //ImGui::Text("Taskesy");
@@ -496,7 +492,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                 }
                 if (ImGui::BeginPopup("Edit Text")) {
                     ImGui::InputText("Input Text", inputBuffer, IM_ARRAYSIZE(inputBuffer));
-                    if (ImGui::Button("Accept")) {
+                    if (ImGui::Button("Accept") || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
                         columnNames[currentColumn] = strdup(inputBuffer);
                         if (!strcmp(columnNames[currentColumn], ""))
                         {
@@ -508,7 +504,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                         strncpy(inputBuffer, noneText, sizeof(noneText));
                     }
                     ImGui::SameLine();
-                    if (ImGui::Button("Cancel")) {
+                    if (ImGui::Button("Cancel") || ImGui::IsKeyPressed(ImGuiKey_Escape)) {
                         ImGui::CloseCurrentPopup();
                         currentColumn = -1;
                         strncpy(inputBuffer, noneText, sizeof(noneText));
@@ -542,7 +538,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                     {
                         if (ImGui::BeginPopup("Edit Text")) {
                             ImGui::InputText("Input Text", inputBuffer, IM_ARRAYSIZE(inputBuffer));
-                            if (ImGui::Button("Accept")) {
+                            if (ImGui::Button("Accept") || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
                                 text[*ptrCurrentBoxID] = strdup(inputBuffer);
                                 showColumn[*ptrCurrentBoxColumn] = false;
                                 numberColumn[*ptrCurrentBoxColumn] += 1;
@@ -550,7 +546,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                                 strncpy(inputBuffer, noneText, sizeof(noneText));
                             }
                             ImGui::SameLine();
-                            if (ImGui::Button("Cancel")) {
+                            if (ImGui::Button("Cancel") || ImGui::IsKeyPressed(ImGuiKey_Escape)) {
                                 ImGui::CloseCurrentPopup();
                                 strncpy(inputBuffer, noneText, sizeof(noneText));
                             }
@@ -8758,12 +8754,13 @@ void ImGui::TaskesyAddColumn()
     std::string columnName;
 
     // We initialize the boxes and column name and we only do it if there arent empty boxes
-    for (size_t row = 0; row < taskesyRows; ++row)
+    for (int row = 0; row < taskesyRows; ++row)
     {
         if (row == 0)
         {
             columnName = "Column Name " + std::to_string(taskesyColumns - 1);
             columnNames.push_back(strdup(columnName.c_str()));
+            numberColumn.push_back(0);
         }
         text.push_back("None");
     }
@@ -8788,6 +8785,7 @@ void ImGui::TaskesyDeleteColumn()
     if (taskesyColumns > 1)
     {
         columnNames.pop_back();
+        numberColumn.pop_back();
         taskesyColumns--;
 
         // If you delete a column, the boxes' index change, so we have to sort them
@@ -8813,18 +8811,31 @@ void ImGui::TaskesyAddRow()
     taskesyRows++;
 
     // We fill a row with empty boxes
-    for (size_t column = 0; column < taskesyColumns; ++column)
+    for (int column = 0; column < taskesyColumns; ++column)
         text.push_back("None");
 }
 
 void ImGui::TaskesyDeleteRow()
 {
     if (taskesyRows > 1)
-    {
+    { 
         taskesyRows--;
 
+        // If we delete a row, we have to make sure that if we delete a correct box, we have to modify "numberColumn"
+        for (int column = 0; column < taskesyColumns; ++column)
+        {
+            if (text[taskesyRows * taskesyColumns + column] != "None")
+            {
+                numberColumn[column] -= 1;
+            }
+            else if (showColumn[column] && numberColumn[column] == taskesyRows)
+            {
+                showColumn[column] = false;
+            }
+        }
+
         // If you delete a row, you lose its boxes
-        for (size_t column = 0; column < taskesyColumns; ++column)
+        for (int column = 0; column < taskesyColumns; ++column)
             text.pop_back();
     }
 }
@@ -8847,7 +8858,7 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
     if (ImGui::BeginMainMenuBar())
     {
         if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("Change Background Color", "Ctrl+C")) {
+            if (ImGui::MenuItem("Change Background Color", "Ctrl+G")) {
                 colorWindow = true;
             }
 
@@ -8907,11 +8918,12 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
                 if (!filePath.empty())
                 {
                     // Clean values to not get unexpected results
-                    while (!columnNames.empty())
+                    //while (!columnNames.empty())
+                    while (!showColumn.empty())
                     {
-                        columnNames.pop_back();
+                        //columnNames.pop_back();
                         showColumn.pop_back();
-                        numberColumn.pop_back();
+                        //numberColumn.pop_back();
                     }
 
                     while (!text.empty())
@@ -8919,11 +8931,10 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
 
                     // We deserialize Taskesy
                     DataSerializer serializer;
-                    serializer.Deserialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, filePath);
+                    serializer.Deserialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, numberColumn, filePath);
 
                     // We initialize auxiliars after reading the proper data
                     showColumn.resize(taskesyColumns, false);
-                    numberColumn.resize(taskesyColumns, 0);
 
                     currentColumn = -1;
                     columnPopUp = false;
@@ -8938,7 +8949,7 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
                 {
                     // We serialize Taskesy
                     DataSerializer serializer;
-                    serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, filePath);
+                    serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, numberColumn, filePath);
                 }
             }
             ImGui::EndMenu();
@@ -9060,7 +9071,7 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
     // Shortcuts
 
     // Background Color
-    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_C)) {
+    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_G)) {
         colorWindow = true;
     }
 
@@ -9117,11 +9128,12 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
         if (!filePath.empty())
         {
             // Clean values to not get unexpected results
-            while (!columnNames.empty())
+            //while (!columnNames.empty())
+            while (!showColumn.empty())
             {
-                columnNames.pop_back();
+                //columnNames.pop_back();
                 showColumn.pop_back();
-                numberColumn.pop_back();
+                //numberColumn.pop_back();
             }
 
             while (!text.empty())
@@ -9129,11 +9141,10 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
 
             // We deserialize Taskesy
             DataSerializer serializer;
-            serializer.Deserialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, filePath);
+            serializer.Deserialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, numberColumn, filePath);
 
             // We initialize auxiliars after reading the proper data
             showColumn.resize(taskesyColumns, false);
-            numberColumn.resize(taskesyColumns, 0);
 
             currentColumn = -1;
             columnPopUp = false;
@@ -9147,7 +9158,7 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
         {
             // We serialize Taskesy
             DataSerializer serializer;
-            serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, filePath);
+            serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, numberColumn, filePath);
         }
     }
 }

@@ -1,23 +1,32 @@
 Taskesy: true
-Main Color: [0.49650264, 0.23205294, 0.7502433, 1]
-Box Color: [0.58255064, 0.4, 0.8, 0.8]
-Rows: 3
+Main Color: [0.13945366, 0.13, 0.28, 1]
+Box Color: [0.5098705, 0.4, 0.8, 0.8]
+Rows: 4
 Columns: 4
 Column Names:
-  - TestColumn1
-  - TestColumn2
-  - TestColumn3
-  - TestColumn4
+  - Column1
+  - Column2
+  - Column3
+  - Column4
+Number of Boxes per Column:
+  - 4
+  - 4
+  - 4
+  - 4
 Box Text:
   - Box1
-  - Box11
-  - Box111
-  - Box1111
   - Box2
-  - Box22
-  - Box222
-  - Box2222
   - Box3
+  - Box4
+  - Box11
+  - Box22
   - Box33
+  - Box44
+  - Box111
+  - Box222
   - Box333
+  - Box444
+  - Box1111
+  - Box2222
   - Box3333
+  - Box4444

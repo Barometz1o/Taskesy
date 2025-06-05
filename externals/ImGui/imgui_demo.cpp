@@ -429,6 +429,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
     // Before drawing
     int boxSizeX = x_coord / (taskesyColumns + 0.19);
     int boxSizeY = y_coord / (taskesyRows + 0.19f);
+    ImVec2 boxSize(boxSizeX, boxSizeY);
 
     // Resize bool column vector
     showColumn.resize(taskesyColumns);
@@ -459,7 +460,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
     static ImGuiTableFlags flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV;
 
     // Input buffer
-    static char inputBuffer[256] = "";
+    static char inputBuffer[1024] = "";
     const char* noText = "No text";
     const char* noneText = "";
 
@@ -523,7 +524,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                 {
                     ID = row * taskesyColumns + column;
                     ImGui::PushID(ID);
-                    ImGui::Button(text[ID], ImVec2(boxSizeX, boxSizeY)); // To change
+                    ImGui::Button(text[ID], boxSize); // To change
 
                     // If we press the button with right click we will trigger the Pop Up
                     if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
@@ -537,6 +538,35 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                     if (*ptrCurrentBoxID == ID)
                     {
                         if (ImGui::BeginPopup("Edit Text")) {
+                            std::string line = text[ID];
+                            std::string lineAux;
+                            size_t i = 0;
+                            while (!line.empty())
+                            {
+                                lineAux += line.front();
+                                ++i;
+                                line.erase(0, 1);
+                                if (i > 40)
+                                {
+                                    lineAux += "\n";
+                                    i = 0;
+                                }
+                            }
+                            /*
+                            for (size_t i = 0; i < lineToPrint.size(); ++i)
+                            {
+                                ImGui::Text(lineToPrint[i].c_str());
+                            }
+                            */
+                            //if (lineToPrint.size() == 0)
+                            ImGui::Text(lineAux.c_str());
+                            /*else {
+                                for (size_t i = 0; i < lineToPrint.size(); ++i)
+                                {
+                                    ImGui::Text(lineToPrint[i]);
+                                }
+                            }*/
+                            
                             ImGui::InputText("Input Text", inputBuffer, IM_ARRAYSIZE(inputBuffer));
                             if (ImGui::Button("Accept") || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
                                 text[*ptrCurrentBoxID] = strdup(inputBuffer);
@@ -544,7 +574,32 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                                 numberColumn[*ptrCurrentBoxColumn] += 1;
                                 ImGui::CloseCurrentPopup();
                                 strncpy(inputBuffer, noneText, sizeof(noneText));
+
+                                /*
+                                if (ImGui::CalcTextSize(text[ID]).x > boxSizeX)
+                                {
+                                    bool finished = false;
+                                    std::string line;
+                                    std::string overflowingText = text[ID];
+                                    while (!finished)
+                                    {
+                                        while (ImGui::CalcTextSize(line.c_str()).x != boxSizeX && !overflowingText.empty())
+                                        {
+                                            line += overflowingText.front();
+                                            overflowingText.erase(0, 1);
+                                        }
+
+                                        if (CalcTextSize(line.c_str()).x == boxSizeX)
+                                            text[ID] = strdup((line + "\n").c_str());
+                                        else
+                                            finished = true;
+
+                                        line = text[ID];
+                                    }
+                                }
+                                */
                             }
+                           
                             ImGui::SameLine();
                             if (ImGui::Button("Cancel") || ImGui::IsKeyPressed(ImGuiKey_Escape)) {
                                 ImGui::CloseCurrentPopup();

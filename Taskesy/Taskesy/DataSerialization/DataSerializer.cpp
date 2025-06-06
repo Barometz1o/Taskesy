@@ -134,15 +134,15 @@ void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& task
 	}
 
 	// Text boxes
-	for (int column = 0; column < taskesyColumns; column++)
+	for (int row = 0; row < taskesyRows; row++)
 	{
-		for (int row = 0; row < taskesyRows; row++)
+		for (int column = 0; column < taskesyColumns; column++)
 		{
-			if (data["Box Text"][row * taskesyColumns + column].as<std::string>() == "None")
+			if (data["Box Text"][column * taskesyRows + row].as<std::string>() == "None")
 				text.push_back("None");
 			else
 			{
-				boxText = data["Box Text"][row * taskesyColumns + column].as<std::string>();
+				boxText = data["Box Text"][column * taskesyRows + row].as<std::string>();
 				text.push_back(_strdup(boxText.c_str()));
 			}
 		}

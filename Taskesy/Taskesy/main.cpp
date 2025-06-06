@@ -17,9 +17,11 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_vulkan.h"
 #include <iostream>
-#include <stdio.h>          // printf, fprintf
-#include <stdlib.h>         // abort
-//#include <windows.h>        // RELEASE
+#include <stdio.h>              // printf, fprintf
+#include <stdlib.h>             // abort
+#ifndef _DEBUG
+    #include <windows.h>        // RELEASE
+#endif
 //#define GLFW_INCLUDE_NONE
 //#define GLFW_INCLUDE_VULKAN
 //#include <GLFW/glfw3.h>
@@ -375,8 +377,11 @@ void setWindowIcon(GLFWwindow* window, const char* iconPath) {
 }
 
 // Main code
-int main(int, char**)                                                                               // DEBUG
-//int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)   // RELEASE
+#ifdef _DEBUG
+    int main(int, char**)                                                                               // DEBUG
+#else
+    int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)     // RELEASE
+#endif
 {
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
@@ -465,8 +470,11 @@ int main(int, char**)                                                           
     ImVec4* ptr_color = &clear_color;
 
     // Set Up Icon
-    setWindowIcon(window, "../../resources/icon/taskesy_icon.png");           //DEBUG
-    //setWindowIcon(window, "./icon/taskesy_icon.png");                           // Release
+    #ifdef _DEBUG
+        setWindowIcon(window, "../../resources/icon/taskesy_icon.png");             //DEBUG
+    #else
+        setWindowIcon(window, "./icon/taskesy_icon.png");                           // RELEASE
+    #endif
 
     // Current box that we are editing
     int currentBoxID = -1;

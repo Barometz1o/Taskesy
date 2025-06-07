@@ -358,9 +358,19 @@ struct ImGuiDemoWindowData
 // We change the box color with the selected color
 void changeButtonColor()
 {
+    //Buttons
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 0.8f));                 // Normal Color
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 0.9f));          // If hovered
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 1.0f));           // On Click
+
+    //ImGui::PushStyleColor(ImGuiCol_Text, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 1.0f));                   // Text Color
+
+    // Headers
+    ImGui::PushStyleColor(ImGuiCol_Header, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 1.0f));                 // Normal Color
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 1.0f));          // If hovered
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 1.0f));           // On Click
+
+    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 1.0f));                 // Border Color
 }
 
 // Demonstrate most Dear ImGui features (this is big function!)
@@ -659,7 +669,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
         ImGui::EndTable();
     }
 
-    ImGui::PopStyleColor(3);
+    ImGui::PopStyleColor(7);
     ImGui::End();
 }
 
@@ -8908,8 +8918,7 @@ void ImGui::TaskesyDeleteRow()
 // - BeginMainMenuBar() = helper to create menu-bar-sized window at the top of the main viewport + call BeginMenuBar() into it.
 static void ShowExampleAppMainMenuBar(GLFWwindow* window)
 {
-    //changeButtonColor();
-
+    changeButtonColor();
     if (ImGui::BeginMainMenuBar())
     {
         if (ImGui::BeginMenu("File")) {
@@ -9042,7 +9051,7 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
             ImGui::EndMenu();
         }
         */
-        
+
         // Add Box
         if (ImGui::BeginMenu("Add Box"))
         {
@@ -9089,6 +9098,8 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
             ImGui::EndMenu();
         }
 
+        ImGui::Text("                                                         ");
+
         // Credits
         if (ImGui::BeginMenu("Credits"))
         {
@@ -9112,14 +9123,14 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
             ImGui::EndMenu();
         }
         */
-
+        ImGui::Text(" ");
             // Real Time Performance Visualization
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 
-        //ImGui::PopStyleColor(3);
+        ImGui::PopStyleColor(7);
         ImGui::EndMainMenuBar();
     }
 

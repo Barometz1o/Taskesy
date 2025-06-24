@@ -549,7 +549,10 @@ void setWindowIcon(GLFWwindow* window, const char* iconPath) {
             ImGui::End();
         }
         */
-        
+
+        // Disable ImGui's Ini File
+        ImGui::GetIO().IniFilename = NULL;
+
         // Rendering
         ImGui::Render();
         ImDrawData* draw_data = ImGui::GetDrawData();

@@ -259,6 +259,13 @@ ImVec4 boxColor(0.8f, 0.4f, 0.4f, 0.8f);
 ImVec4* ptrBoxColor = &boxColor;
 bool boxColorWindow = false;
 
+// Box exchange
+int currentBox1 = -1;
+int currentBox2 = -1;
+
+// We save the filepath to save the file
+std::string filePath;
+
 // Forward Declarations
 struct ImGuiDemoWindowData;
 static void ShowExampleAppMainMenuBar(GLFWwindow* window);
@@ -373,6 +380,21 @@ void changeButtonColor()
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 1.0f));                 // Border Color
 }
 
+void checkColumnBoxes()
+{
+    for (int column = 0; column < taskesyColumns; column++)
+    {
+        numberColumn[column] = 0;
+        for (int row = 0; row < taskesyRows; row++)
+        {
+            if (text[row * taskesyColumns + column] != "None")
+                numberColumn[column] += 1;
+            else
+                break;
+        }
+    }
+}
+
 // Demonstrate most Dear ImGui features (this is big function!)
 // You may execute this function to experiment with the UI and understand what it does.
 // You may then search for keywords in the code when you are interested by a specific feature.
@@ -448,6 +470,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
     //ImGui::Text("Taskesy");
 
     // Display box mode (swap, move and copy)
+    /*
     enum Mode
     {
         Mode_Swap,
@@ -455,7 +478,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
         Mode_Copy
     };
     static int mode = 0;
-
+    */
     // TODO
     /*
     if (ImGui::RadioButton("Swap", mode == Mode_Swap)) { mode = Mode_Swap; } ImGui::SameLine();
@@ -467,7 +490,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
     // In my case does not work due to the rendering window.
 
     // Flags to create the table
-    static ImGuiTableFlags flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV;
+    static ImGuiTableFlags flags;// = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV;
 
     // Input buffer
     static char inputBuffer[1024] = "";
@@ -534,15 +557,6 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                 {
                     ID = row * taskesyColumns + column;
                     ImGui::PushID(ID);
-                    ImGui::Button(text[ID], boxSize); // To change
-
-                    // If we press the button with right click we will trigger the Pop Up
-                    if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-                        ImGui::OpenPopup("Edit Text");
-                        strncpy(inputBuffer, text[ID], sizeof(inputBuffer));
-                        *ptrCurrentBoxID = ID;
-                        *ptrCurrentBoxColumn = column;
-                    }
 
                     // We create a pop up
                     if (*ptrCurrentBoxID == ID)
@@ -576,12 +590,18 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                                     ImGui::Text(lineToPrint[i]);
                                 }
                             }*/
-                            
+
                             ImGui::InputText("Input Text", inputBuffer, IM_ARRAYSIZE(inputBuffer));
                             if (ImGui::Button("Accept") || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
-                                text[*ptrCurrentBoxID] = strdup(inputBuffer);
-                                showColumn[*ptrCurrentBoxColumn] = false;
-                                numberColumn[*ptrCurrentBoxColumn] += 1;
+                                std::string aux = inputBuffer;
+                                if (aux != "None")
+                                {
+                                    text[*ptrCurrentBoxID] = strdup(inputBuffer);
+                                    showColumn[*ptrCurrentBoxColumn] = false;
+                                }
+                                // If we add a new box, we will be able to see its box
+                                checkColumnBoxes();
+                                //numberColumn[*ptrCurrentBoxColumn] += 1; // BUG
                                 ImGui::CloseCurrentPopup();
                                 strncpy(inputBuffer, noneText, sizeof(noneText));
 
@@ -609,7 +629,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                                 }
                                 */
                             }
-                           
+
                             ImGui::SameLine();
                             if (ImGui::Button("Cancel") || ImGui::IsKeyPressed(ImGuiKey_Escape)) {
                                 ImGui::CloseCurrentPopup();
@@ -619,6 +639,46 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                         }
                     }
 
+                    if (currentBox1 != -1 && ID == currentBox1)
+                    {
+                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4((*ptrColor).x, (*ptrColor).y, (*ptrColor).z, 0.8f));                 // Normal Color
+                        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4((*ptrColor).x, (*ptrColor).y, (*ptrColor).z, 0.9f));          // If hovered
+                        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4((*ptrColor).x, (*ptrColor).y, (*ptrColor).z, 1.0f));           // On Click
+                    }
+
+                    ImGui::Button(text[ID], boxSize); // To change
+
+                    if (currentBox1 != -1 && ID == currentBox1)
+                        ImGui::PopStyleColor(3);
+                    // If we press the button with right click we will trigger the Pop Up
+                    if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+                        ImGui::OpenPopup("Edit Text");
+                        strncpy(inputBuffer, text[ID], sizeof(inputBuffer));
+                        *ptrCurrentBoxID = ID;
+                        *ptrCurrentBoxColumn = column;
+                    }
+
+					// If we press the button with left click we will trigger the exchange boxes option
+                    if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+                        if (currentBox1 == -1)
+                            currentBox1 = ID;
+                        else if (currentBox2 == -1)
+                        {
+                            currentBox2 = ID;
+                            if (currentBox1 != currentBox2)
+                            {
+                                const char* aux = text[currentBox1];
+                                text[currentBox1] = text[currentBox2];
+                                text[currentBox2] = aux;
+                            }
+                            currentBox1 = -1;
+                            currentBox2 = -1;
+                        }
+                    }
+
+                    // Drag and Drop
+
+                    /*
                     // Our buttons are both drag sources and drag targets here!
                     if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
                     {
@@ -642,6 +702,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                             int payload_n = *(const int*)payload->Data;
 
                             // TODO
+                            */
                             /*
                             if (mode == Mode_Copy)
                             {
@@ -653,6 +714,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                                 text[payload_n] = "";
                             }
                             */
+                            /*
                             if (mode == Mode_Swap)
                             {
                                 const char* tmp = text[ID];
@@ -662,13 +724,13 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                         }
                         ImGui::EndDragDropTarget();
                     }
+                    */
                     ImGui::PopID();
                 }
             }
         }
         ImGui::EndTable();
     }
-
     ImGui::PopStyleColor(7);
     ImGui::End();
 }
@@ -8912,6 +8974,109 @@ void ImGui::TaskesyDeleteRow()
 // - ShowExampleMenuFile()
 //-----------------------------------------------------------------------------
 
+void newFile()
+{
+    // Columns and rows
+    taskesyRows = 3;
+    taskesyColumns = 1;
+
+    // If we have current boxes, we stop the exchange
+    currentBox1 = -1;
+    currentBox2 = -1;
+
+    // Because the names are incremental
+    while (!columnNames.empty())
+    {
+        columnNames.pop_back();
+        showColumn.pop_back();
+        numberColumn.pop_back();
+    }
+
+    for (size_t i = 0; i < taskesyColumns; ++i)
+    {
+        ImGui::TaskesyAddColumn();
+    }
+
+    showColumn.resize(taskesyColumns, false);
+    numberColumn.resize(taskesyColumns, 0);
+
+    while (!text.empty())
+    {
+        text.pop_back();
+    }
+
+    text.resize(taskesyColumns * taskesyRows, "None");
+    currentColumn = -1;
+    columnPopUp = false;
+
+    // Color
+    ImVec4 clear_color(0.28f, 0.13f, 0.13f, 1.0f);
+    *ptrColor = clear_color;
+    colorWindow = false;
+
+    // Box color
+    boxColor = ImVec4(0.8f, 0.4f, 0.4f, 0.8f);
+    ptrBoxColor = &boxColor;
+    boxColorWindow = false;
+
+    // We clear the filepath
+    filePath.clear();
+}
+
+void openFile(GLFWwindow* window)
+{
+    std::string filePathAux = FileDialogs::OpenFile("Taskesy (*.todo)\0*.todo\0", window);
+    if (!filePathAux.empty())
+    {
+        filePath = filePathAux;
+        // Clean values to not get unexpected results
+        //while (!columnNames.empty())
+        while (!showColumn.empty())
+        {
+            //columnNames.pop_back();
+            showColumn.pop_back();
+            //numberColumn.pop_back();
+        }
+
+        while (!text.empty())
+            text.pop_back();
+
+        // We deserialize Taskesy
+        DataSerializer serializer;
+        serializer.Deserialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, numberColumn, filePath);
+
+        // We initialize auxiliars after reading the proper data
+        showColumn.resize(taskesyColumns, false);
+
+        currentColumn = -1;
+        columnPopUp = false;
+    }
+}
+
+void saveFileAs(GLFWwindow* window)
+{
+    std::string filePathAux = FileDialogs::SaveFile("Taskesy (*.todo)\0*.todo\0", window);
+    if (!filePathAux.empty())
+    {
+        filePath = filePathAux;
+        // We serialize Taskesy
+        DataSerializer serializer;
+        serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, numberColumn, filePath);
+    }
+}
+
+void saveFile(GLFWwindow* window)
+{
+    if (!filePath.empty())
+    {
+        // We serialize Taskesy
+        DataSerializer serializer;
+        serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, numberColumn, filePath);
+    }
+    else
+        saveFileAs(window);
+}
+
 // Demonstrate creating a "main" fullscreen menu bar and populating it.
 // Note the difference between BeginMainMenuBar() and BeginMenuBar():
 // - BeginMenuBar() = menu-bar inside current window (which needs the ImGuiWindowFlags_MenuBar flag!)
@@ -8935,86 +9100,24 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
             ImGui::Separator();
 
             if (ImGui::MenuItem("New", "Ctrl+N")) {
-                // Columns and rows
-                taskesyRows = 3;
-                taskesyColumns = 1;
-
-                // Because the names are incremental
-                while (!columnNames.empty())
-                {
-                    columnNames.pop_back();
-                    showColumn.pop_back();
-                    numberColumn.pop_back();
-                }
-
-                for (size_t i = 0; i < taskesyColumns; ++i)
-                {
-                    ImGui::TaskesyAddColumn();
-                }
-
-                showColumn.resize(taskesyColumns, false);
-                numberColumn.resize(taskesyColumns, 0);
-
-                while (!text.empty())
-                {
-                    text.pop_back();
-                }
-
-                text.resize(taskesyColumns * taskesyRows, "None");
-                currentColumn = -1;
-                columnPopUp = false;
-
-                // Color
-                ImVec4 clear_color(0.28f, 0.13f, 0.13f, 1.0f);
-                *ptrColor = clear_color;
-                colorWindow = false;
-
-                // Box color
-                boxColor = ImVec4(0.8f, 0.4f, 0.4f, 0.8f);
-                ptrBoxColor = &boxColor;
-                boxColorWindow = false;
+                newFile();
             }
 
             ImGui::Separator();
 
             if (ImGui::MenuItem("Open", "Ctrl+O")) {
-                std::string filePath = FileDialogs::OpenFile("Taskesy (*.todo)\0*.todo\0", window);
-                if (!filePath.empty())
-                {
-                    // Clean values to not get unexpected results
-                    //while (!columnNames.empty())
-                    while (!showColumn.empty())
-                    {
-                        //columnNames.pop_back();
-                        showColumn.pop_back();
-                        //numberColumn.pop_back();
-                    }
+                openFile(window);
+            }
+            ImGui::Separator();
 
-                    while (!text.empty())
-                        text.pop_back();
-
-                    // We deserialize Taskesy
-                    DataSerializer serializer;
-                    serializer.Deserialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, numberColumn, filePath);
-
-                    // We initialize auxiliars after reading the proper data
-                    showColumn.resize(taskesyColumns, false);
-
-                    currentColumn = -1;
-                    columnPopUp = false;
-                }
+            if (ImGui::MenuItem("Save", "Ctrl+S")) {
+                saveFile(window);
             }
 
             ImGui::Separator();
 
-            if (ImGui::MenuItem("Save As...", "Ctrl+S")) {
-                std::string filePath = FileDialogs::SaveFile("Taskesy (*.todo)\0*.todo\0", window);
-                if (!filePath.empty())
-                {
-                    // We serialize Taskesy
-                    DataSerializer serializer;
-                    serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, numberColumn, filePath);
-                }
+            if (ImGui::MenuItem("Save As...", "Ctrl+Alt+S")) {
+                saveFileAs(window);
             }
             ImGui::EndMenu();
         }
@@ -9098,6 +9201,7 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
             ImGui::EndMenu();
         }
 
+        // Padding
         ImGui::Text("                                                         ");
 
         // Credits
@@ -9148,84 +9252,21 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
 
     // New File
     if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_N)) {
-        // Columns and rows
-        taskesyRows = 3;
-        taskesyColumns = 1;
-
-        // Because the names are incremental
-        while (!columnNames.empty())
-        {
-            columnNames.pop_back();
-            showColumn.pop_back();
-            numberColumn.pop_back();
-        }
-
-        for (size_t i = 0; i < taskesyColumns; ++i)
-        {
-            ImGui::TaskesyAddColumn();
-        }
-
-        showColumn.resize(taskesyColumns, false);
-        numberColumn.resize(taskesyColumns, 0);
-
-        while (!text.empty())
-        {
-            text.pop_back();
-        }
-
-        text.resize(taskesyColumns * taskesyRows, "None");
-        currentColumn = -1;
-        columnPopUp = false;
-
-        // Color
-        ImVec4 clear_color(0.28f, 0.13f, 0.13f, 1.0f);
-        *ptrColor = clear_color;
-        colorWindow = false;
-
-        // Box color
-        boxColor = ImVec4(0.8f, 0.4f, 0.4f, 0.8f);
-        ptrBoxColor = &boxColor;
-        boxColorWindow = false;
+        newFile();
     }
 
     // Open File
     if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_O)) {
-        std::string filePath = FileDialogs::OpenFile("Taskesy (*.todo)\0*.todo\0", window);
-        if (!filePath.empty())
-        {
-            // Clean values to not get unexpected results
-            //while (!columnNames.empty())
-            while (!showColumn.empty())
-            {
-                //columnNames.pop_back();
-                showColumn.pop_back();
-                //numberColumn.pop_back();
-            }
-
-            while (!text.empty())
-                text.pop_back();
-
-            // We deserialize Taskesy
-            DataSerializer serializer;
-            serializer.Deserialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, numberColumn, filePath);
-
-            // We initialize auxiliars after reading the proper data
-            showColumn.resize(taskesyColumns, false);
-
-            currentColumn = -1;
-            columnPopUp = false;
-        }
+        openFile(window);
     }
 
+    // Save File As
+    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_LeftAlt) && ImGui::IsKeyPressed(ImGuiKey_S)) {
+        saveFileAs(window);
+    }
     // Save File
-    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_S)) {
-        std::string filePath = FileDialogs::SaveFile("Taskesy (*.todo)\0*.todo\0", window);
-        if (!filePath.empty())
-        {
-            // We serialize Taskesy
-            DataSerializer serializer;
-            serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, numberColumn, filePath);
-        }
+    else if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_S)) {
+        saveFile(window);
     }
 }
 

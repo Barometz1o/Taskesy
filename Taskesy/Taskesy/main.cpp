@@ -484,6 +484,9 @@ void setWindowIcon(GLFWwindow* window, const char* iconPath) {
 
     ImGui::TaskesyAddColumn();
 
+    // Disable ImGui's Debug Message errors with conflicting ID's
+    ImGui::GetIO().ConfigDebugHighlightIdConflicts = false;
+
     // Main loop
     while (!glfwWindowShouldClose(window))
     {

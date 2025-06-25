@@ -263,6 +263,10 @@ bool boxColorWindow = false;
 int currentBox1 = -1;
 int currentBox2 = -1;
 
+// Column exchange
+int currentColumn1 = -1;
+int currentColumn2 = -1;
+
 // We save the filepath to save the file
 std::string filePath;
 
@@ -513,7 +517,33 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
         ImGui::TableNextRow();
         for (int column = 0; column < taskesyColumns; column++)
         {
+
             ImGui::TableSetColumnIndex(column);
+
+            /*
+            // If we press the button with left click we will trigger the exchange columns option
+            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+                if (currentColumn1 == -1)
+                    currentColumn1 = column;
+                else if (currentColumn2 == -1)
+                {
+                    currentColumn2 = column;
+                    if (currentColumn1 != currentColumn2)
+                    {
+                        std::vector<const char*> aux;
+
+                        for (int j = 0; j < taskesyRows; j++)
+                        {
+                            aux.push_back(text[j * taskesyColumns + currentColumn1]);
+                            text[j * taskesyColumns + currentColumn1] = text[j * taskesyColumns + currentColumn2];
+                            text[j * taskesyColumns + currentColumn2] = aux[j];
+                        }
+                    }
+                    currentColumn1 = -1;
+                    currentColumn2 = -1;
+                }
+            }
+            */
 
             // We create a pop up
             if (currentColumn == column)
@@ -9142,6 +9172,44 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
             ImGui::EndMenu();
         }
 
+        if (ImGui::BeginMenu("Exchange Columns"))
+        {
+            for (int column = 0; column < taskesyColumns; ++column)
+            {
+                if (ImGui::MenuItem(columnNames[column]))
+                {
+                    if (currentColumn1 == -1)
+                        currentColumn1 = column;
+                    else if (currentColumn2 == -1)
+                    {
+                        currentColumn2 = column;
+                        if (currentColumn1 != currentColumn2)
+                        {
+                            std::vector<const char*> aux;
+
+                            for (int j = 0; j < taskesyRows; j++)
+                            {
+                                aux.push_back(text[j * taskesyColumns + currentColumn1]);
+                                text[j * taskesyColumns + currentColumn1] = text[j * taskesyColumns + currentColumn2];
+                                text[j * taskesyColumns + currentColumn2] = aux[j];
+                            }
+                        }
+
+                        const char* aux = columnNames[currentColumn1];
+                        columnNames[currentColumn1] = columnNames[currentColumn2];
+                        columnNames[currentColumn2] = aux;
+                        currentColumn1 = -1;
+                        currentColumn2 = -1;
+                    }
+                }
+
+
+                if (column != taskesyColumns - 1)
+                    ImGui::Separator();
+            }
+            ImGui::EndMenu();
+        }
+
         /*
         if (ImGui::BeginMenu("Edit"))
         {
@@ -9202,7 +9270,7 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
         }
 
         // Padding (Let X available space and the one from the text)
-        ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x + 60);
+        ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x + 190);
 
         // Credits
         if (ImGui::BeginMenu("Credits"))

@@ -665,7 +665,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                         else if (currentBox2 == -1)
                         {
                             currentBox2 = ID;
-                            if (currentBox1 != currentBox2)
+                            if (currentBox1 != currentBox2 && std::string(text[currentBox1]) != "None" && std::string(text[currentBox2]) != "None")
                             {
                                 const char* aux = text[currentBox1];
                                 text[currentBox1] = text[currentBox2];

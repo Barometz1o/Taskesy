@@ -9201,8 +9201,8 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
             ImGui::EndMenu();
         }
 
-        // Padding
-        ImGui::Text("                                                         ");
+        // Padding (Let X available space and the one from the text)
+        ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x + 60);
 
         // Credits
         if (ImGui::BeginMenu("Credits"))

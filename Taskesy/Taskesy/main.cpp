@@ -390,6 +390,7 @@ void setWindowIcon(GLFWwindow* window, const char* iconPath) {
     // Create window with Vulkan context
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     GLFWwindow* window = glfwCreateWindow(1280, 720, "Taskesy", nullptr, nullptr); 
+    glfwSetWindowMonitor(window, nullptr, 140, 140, 1280, 720, -1);
     if (!glfwVulkanSupported())
     {
         printf("GLFW: Vulkan Not Supported\n");

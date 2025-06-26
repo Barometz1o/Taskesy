@@ -273,6 +273,12 @@ int currentColumn2 = -1;
 // We save the filepath to save the file
 std::string filePath;
 
+// Menu
+bool fullscreen = false;
+bool checkboxDark = true;           // Initial style
+bool checkboxLight = false;
+bool checkboxClassic = false;
+
 // Forward Declarations
 struct ImGuiDemoWindowData;
 static void ShowExampleAppMainMenuBar(GLFWwindow* window);
@@ -451,7 +457,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
     float y_coord = ImGui::GetIO().DisplaySize.y;
     ImGui::SetNextWindowSize(ImVec2(x_coord - 20, y_coord - 40));
 
-    ImGui::Begin("MainWindow", nullptr,
+    ImGui::Begin("TaskesyMainWindow", nullptr,
         ImGuiWindowFlags_NoTitleBar |
         ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_NoMove |
@@ -9066,6 +9072,11 @@ void ImGui::TaskesyDeleteRow()
 
 void newFile()
 {
+    // Menu Style
+    checkboxDark = true;
+    checkboxLight = false;
+    checkboxClassic = false;
+
     // Columns and rows
     taskesyRows = 3;
     taskesyColumns = 1;
@@ -9142,7 +9153,30 @@ void openFile(GLFWwindow* window)
 
         // We deserialize Taskesy
         DataSerializer serializer;
-        serializer.Deserialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, completed, numberColumn, filePath);
+
+        int menuStyle;
+        serializer.Deserialize(menuStyle, ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, completed, numberColumn, filePath);
+
+        switch (menuStyle)
+        {
+        case 0:
+            ImGui::StyleColorsDark();
+            checkboxDark = true;
+            checkboxLight = false;
+            checkboxClassic = false;
+            break;
+        case 1:
+            ImGui::StyleColorsLight();
+            checkboxDark = false;
+            checkboxLight = true;
+            checkboxClassic = false;
+            break;
+        default:
+            ImGui::StyleColorsClassic();
+            checkboxDark = false;
+            checkboxLight = false;
+            checkboxClassic = true;
+        }
 
         // We initialize auxiliars after reading the proper data
         showColumn.resize(taskesyColumns, false);
@@ -9158,9 +9192,20 @@ void saveFileAs(GLFWwindow* window)
     if (!filePathAux.empty())
     {
         filePath = filePathAux;
+
         // We serialize Taskesy
         DataSerializer serializer;
-        serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, completed, numberColumn, filePath);
+
+        // Menu Style
+        int menuStyle;
+        if (checkboxDark)
+            menuStyle = 0;
+        else if (checkboxLight)
+            menuStyle = 1;
+        else
+            menuStyle = 2;
+
+        serializer.Serialize(menuStyle, ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, completed, numberColumn, filePath);
     }
 }
 
@@ -9170,7 +9215,17 @@ void saveFile(GLFWwindow* window)
     {
         // We serialize Taskesy
         DataSerializer serializer;
-        serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, completed, numberColumn, filePath);
+
+        // Menu Style
+        int menuStyle;
+        if (checkboxDark)
+            menuStyle = 0;
+        else if (checkboxLight)
+            menuStyle = 1;
+        else
+            menuStyle = 2;
+
+        serializer.Serialize(menuStyle, ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, completed, numberColumn, filePath);
     }
     else
         saveFileAs(window);
@@ -9186,6 +9241,54 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
     if (ImGui::BeginMainMenuBar())
     {
         if (ImGui::BeginMenu("File")) {
+
+            if (ImGui::BeginMenu("Menu"))
+            {
+                if (ImGui::BeginMenu("Fullscreen", "Alt+Enter")) {
+                    if (ImGui::Checkbox("Borderless", &fullscreen))
+                    {
+                        if (fullscreen)
+                            glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, -1);
+                        else
+                            glfwSetWindowMonitor(window, nullptr, 140, 140, 1280, 720, -1);
+                    }
+                    ImGui::EndMenu();
+                }
+
+                ImGui::Separator();
+
+                if (ImGui::BeginMenu("Style"))
+                {
+                    if (ImGui::Checkbox("Dark", &checkboxDark))
+                    {
+                        checkboxDark = true;
+                        checkboxLight = false;
+                        checkboxClassic = false;
+                        ImGui::StyleColorsDark();
+                    }
+                    ImGui::Separator();
+                    if (ImGui::Checkbox("Light", &checkboxLight))
+                    {
+                        checkboxDark = false;
+                        checkboxLight = true;
+                        checkboxClassic = false;
+                        ImGui::StyleColorsLight();
+                    }
+                    ImGui::Separator();
+                    if (ImGui::Checkbox("Classic", &checkboxClassic))
+                    {
+                        checkboxDark = false;
+                        checkboxLight = false;
+                        checkboxClassic = true;
+                        ImGui::StyleColorsClassic();
+                    }
+                    ImGui::EndMenu();
+                }
+                ImGui::EndMenu();
+            }
+
+            ImGui::Separator();
+
             if (ImGui::MenuItem("Change Background Color", "Ctrl+G")) {
                 colorWindow = true;
             }
@@ -9218,6 +9321,13 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
             if (ImGui::MenuItem("Save As...", "Ctrl+Alt+S")) {
                 saveFileAs(window);
             }
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Exit", "Ctrl+W")) {
+                exit(0);
+            }
+
             ImGui::EndMenu();
         }
         
@@ -9381,6 +9491,13 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
     }
 
     // Shortcuts
+    if (ImGui::IsKeyDown(ImGuiKey_LeftAlt) && ImGui::IsKeyPressed(ImGuiKey_Enter)) {
+        fullscreen = !fullscreen;
+        if (fullscreen)
+            glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, -1);
+        else
+            glfwSetWindowMonitor(window, nullptr, 140, 140, 1280, 720, -1);
+    }
 
     // Background Color
     if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_G)) {
@@ -9406,9 +9523,15 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
     if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_LeftAlt) && ImGui::IsKeyPressed(ImGuiKey_S)) {
         saveFileAs(window);
     }
+
     // Save File
     else if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_S)) {
         saveFile(window);
+    }
+
+    // Exit
+    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_W)) {
+        exit(0);
     }
 }
 

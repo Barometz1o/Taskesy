@@ -5,7 +5,7 @@
 
 #include "DataSerializer.h"
 
-void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taskesyRows, size_t taskesyColumns, std::vector<const char*> columnNames, std::vector<const char*> text, std::vector<bool> completed, std::vector<int> numberColumn, const std::string& filepath)
+void DataSerializer::Serialize(int menuStyle, ImVec4* main_color, ImVec4 boxColor, size_t taskesyRows, size_t taskesyColumns, std::vector<const char*> columnNames, std::vector<const char*> text, std::vector<bool> completed, std::vector<int> numberColumn, const std::string& filepath)
 {
 	ImVec4 mainColor = *main_color;
 	YAML::Emitter out;
@@ -16,6 +16,10 @@ void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taske
 	// Taskesy file identification
 	out << YAML::Key << "Taskesy";
 	out << YAML::Value << true;
+
+	// Menu Style
+	out << YAML::Key << "Menu Style";
+	out << YAML::Value << menuStyle;
 
 	// Main backgroud color
 	out << YAML::Key << "Main Color";
@@ -90,7 +94,7 @@ void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taske
 	fout << out.c_str();
 }
 
-void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& taskesyRows, int& taskesyColumns, std::vector<const char*>& columnNames, std::vector<const char*>& text, std::vector<bool>& completed, std::vector<int>& numberColumn, const std::string& filepath)
+void DataSerializer::Deserialize(int& menuStyle, ImVec4* main_color, ImVec4& boxColor, int& taskesyRows, int& taskesyColumns, std::vector<const char*>& columnNames, std::vector<const char*>& text, std::vector<bool>& completed, std::vector<int>& numberColumn, const std::string& filepath)
 {
 	std::ifstream stream(filepath);
 	std::stringstream strStream;
@@ -100,6 +104,10 @@ void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& task
 	if (!data["Taskesy"])
 		return;
 
+	// Menu Style
+	if (!data["Menu Style"])
+		return;
+	menuStyle = data["Menu Style"].as<int>();
 	// Color
 	if (!data["Main Color"])
 		return;

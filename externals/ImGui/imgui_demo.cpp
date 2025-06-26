@@ -252,6 +252,9 @@ static bool columnPopUp = false;
 // Box text
 std::vector<const char*> text;
 
+// Box completion
+std::vector<bool> completed;
+
 // Color
 ImVec4* ptrColor;
 bool colorWindow = false;
@@ -409,8 +412,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
     if (colorWindow)
     {
         // Color Pop Up
-        ImGui::Begin("Background Color", nullptr, 
-            ImGuiWindowFlags_NoTitleBar);
+        ImGui::Begin("Background Color", nullptr, ImGuiWindowFlags_NoTitleBar);
         ImGui::ColorEdit3("Background Color", (float*)ptrColor);
         if (ImGui::Button("Accept") || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
             colorWindow = false;
@@ -427,8 +429,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
             //ImGui::PopStyleColor(3);
 
         // Color Pop Up
-        ImGui::Begin("Box Color", nullptr,
-            ImGuiWindowFlags_NoTitleBar);
+        ImGui::Begin("Box Color", nullptr, ImGuiWindowFlags_NoTitleBar);
         ImGui::ColorEdit3("Box Color", (float*)ptrBoxColor);
         if (ImGui::Button("Accept") || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
             boxColorWindow = false;
@@ -573,6 +574,30 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                         currentColumn = -1;
                         strncpy(inputBuffer, noneText, sizeof(noneText));
                     }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Mark as Completed") || ImGui::IsKeyPressed(ImGuiKey_M)) {
+                        bool alreadyMarked = true;
+
+                        // We check if all the column is already completed
+                        for (int row = 0; row < taskesyRows; row++)
+                        {
+                            if (!completed[row * taskesyColumns + currentColumn])
+                            {
+                                alreadyMarked = false;
+                                break;
+                            }
+                        }
+
+                        // We mark all the column as completed
+                        for (int row = 0; row < taskesyRows; row++)
+                        {
+                            if (!alreadyMarked)
+                                completed[row * taskesyColumns + currentColumn] = true;
+                            else
+                                completed[row * taskesyColumns + currentColumn] = false;
+                        }
+                        ImGui::CloseCurrentPopup();
+                    }
                     ImGui::EndPopup();
                 }
             }
@@ -665,6 +690,11 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                                 ImGui::CloseCurrentPopup();
                                 strncpy(inputBuffer, noneText, sizeof(noneText));
                             }
+                            ImGui::SameLine();
+                            if (ImGui::Button("Mark as Completed") || ImGui::IsKeyPressed(ImGuiKey_M)) {
+                                completed[ID] = !completed[ID];
+                                ImGui::CloseCurrentPopup();
+                            }
                             ImGui::EndPopup();
                         }
                     }
@@ -675,11 +705,20 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4((*ptrColor).x, (*ptrColor).y, (*ptrColor).z, 0.9f));          // If hovered
                         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4((*ptrColor).x, (*ptrColor).y, (*ptrColor).z, 1.0f));           // On Click
                     }
+                    else if (completed[ID])
+                    {
+                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 0.4f));         // Normal Color
+                        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 0.5f));  // If hovered
+                        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 0.6f));   // On Click
+                    }
 
-                    ImGui::Button(text[ID], boxSize); // To change
+                    ImGui::Button(text[ID], boxSize); // To change?
 
                     if (currentBox1 != -1 && ID == currentBox1)
                         ImGui::PopStyleColor(3);
+                    else if (completed[ID])
+                        ImGui::PopStyleColor(3);
+
                     // If we press the button with right click we will trigger the Pop Up
                     if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
                         ImGui::OpenPopup("Edit Text");
@@ -700,6 +739,11 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                                 const char* aux = text[currentBox1];
                                 text[currentBox1] = text[currentBox2];
                                 text[currentBox2] = aux;
+
+                                // Box completion
+                                bool auxCompleted = completed[currentBox1];
+                                completed[currentBox1] = completed[currentBox2];
+                                completed[currentBox2] = aux;
                             }
                             currentBox1 = -1;
                             currentBox2 = -1;
@@ -8920,6 +8964,7 @@ void ImGui::TaskesyAddColumn()
             numberColumn.push_back(0);
         }
         text.push_back("None");
+        completed.push_back(false);
     }
     
     // If you add a column, the boxes' index change, so we have to sort them
@@ -8931,6 +8976,10 @@ void ImGui::TaskesyAddColumn()
             {
                 text[row * (taskesyColumns - 1) + column + row] = strdup(text[row * (taskesyColumns - 1) + column]);
                 text[row * (taskesyColumns - 1) + column] = "None";
+
+                // Box completion
+                completed[row * (taskesyColumns - 1) + column + row] = completed[row * (taskesyColumns - 1) + column];
+                completed[row * (taskesyColumns - 1) + column] = false;
             }
         }
     }
@@ -8954,12 +9003,17 @@ void ImGui::TaskesyDeleteColumn()
                 {
                     text[row * (taskesyColumns) + column] = strdup(text[row * (taskesyColumns) + column + row]);
                     text[row * (taskesyColumns) + column + row] = "None";
+
+                    // Box completion
+                    completed[row * (taskesyColumns)+column] = completed[row * (taskesyColumns)+column + row];
+                    completed[row * (taskesyColumns)+column + row] = false;
                 }
             }
         }
 
         // If you delete a column, you lose its boxes
         text.erase(text.begin() + text.size() - taskesyRows, text.end());
+        completed.erase(completed.begin() + completed.size() - taskesyRows, completed.end());
     }
 }
 
@@ -8969,7 +9023,10 @@ void ImGui::TaskesyAddRow()
 
     // We fill a row with empty boxes
     for (int column = 0; column < taskesyColumns; ++column)
+    {
         text.push_back("None");
+        completed.push_back(false);
+    }
 }
 
 void ImGui::TaskesyDeleteRow()
@@ -8993,7 +9050,10 @@ void ImGui::TaskesyDeleteRow()
 
         // If you delete a row, you lose its boxes
         for (int column = 0; column < taskesyColumns; ++column)
+        {
             text.pop_back();
+            completed.pop_back();
+        }
     }
 }
 
@@ -9014,6 +9074,10 @@ void newFile()
     currentBox1 = -1;
     currentBox2 = -1;
 
+    // If we have current columns, we stop the exchange
+    currentColumn1 = -1;
+    currentColumn2 = -1;
+
     // Because the names are incremental
     while (!columnNames.empty())
     {
@@ -9033,9 +9097,11 @@ void newFile()
     while (!text.empty())
     {
         text.pop_back();
+        completed.pop_back();
     }
 
     text.resize(taskesyColumns * taskesyRows, "None");
+    completed.resize(taskesyColumns * taskesyRows, false);
     currentColumn = -1;
     columnPopUp = false;
 
@@ -9069,11 +9135,14 @@ void openFile(GLFWwindow* window)
         }
 
         while (!text.empty())
+        {
             text.pop_back();
+            completed.pop_back();
+        }
 
         // We deserialize Taskesy
         DataSerializer serializer;
-        serializer.Deserialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, numberColumn, filePath);
+        serializer.Deserialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, completed, numberColumn, filePath);
 
         // We initialize auxiliars after reading the proper data
         showColumn.resize(taskesyColumns, false);
@@ -9091,7 +9160,7 @@ void saveFileAs(GLFWwindow* window)
         filePath = filePathAux;
         // We serialize Taskesy
         DataSerializer serializer;
-        serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, numberColumn, filePath);
+        serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, completed, numberColumn, filePath);
     }
 }
 
@@ -9101,7 +9170,7 @@ void saveFile(GLFWwindow* window)
     {
         // We serialize Taskesy
         DataSerializer serializer;
-        serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, numberColumn, filePath);
+        serializer.Serialize(ptrColor, boxColor, taskesyRows, taskesyColumns, columnNames, text, completed, numberColumn, filePath);
     }
     else
         saveFileAs(window);
@@ -9186,12 +9255,17 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
                         if (currentColumn1 != currentColumn2)
                         {
                             std::vector<const char*> aux;
-
+                            std::vector<bool> auxCompleted;
                             for (int j = 0; j < taskesyRows; j++)
                             {
                                 aux.push_back(text[j * taskesyColumns + currentColumn1]);
                                 text[j * taskesyColumns + currentColumn1] = text[j * taskesyColumns + currentColumn2];
                                 text[j * taskesyColumns + currentColumn2] = aux[j];
+
+                                // Box completion
+                                auxCompleted.push_back(completed[j * taskesyColumns + currentColumn1]);
+                                completed[j * taskesyColumns + currentColumn1] = completed[j * taskesyColumns + currentColumn2];
+                                completed[j * taskesyColumns + currentColumn2] = auxCompleted[j];
                             }
                         }
 

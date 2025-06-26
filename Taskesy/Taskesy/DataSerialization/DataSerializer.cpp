@@ -5,7 +5,7 @@
 
 #include "DataSerializer.h"
 
-void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taskesyRows, size_t taskesyColumns, std::vector<const char*> columnNames, std::vector<const char*> text, std::vector<int> numberColumn, const std::string& filepath)
+void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taskesyRows, size_t taskesyColumns, std::vector<const char*> columnNames, std::vector<const char*> text, std::vector<bool> completed, std::vector<int> numberColumn, const std::string& filepath)
 {
 	ImVec4 mainColor = *main_color;
 	YAML::Emitter out;
@@ -68,6 +68,21 @@ void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taske
 	}
 
 	out << YAML::Value << YAML::EndSeq;
+
+	// Completed boxes
+	out << YAML::Key << "Completed Boxes";
+	out << YAML::Value << YAML::BeginSeq;
+
+	for (int column = 0; column < taskesyColumns; column++)
+	{
+		for (int row = 0; row < taskesyRows; row++)
+		{
+			out << completed[row * taskesyColumns + column];
+		}
+	}
+
+	out << YAML::Value << YAML::EndSeq;
+
 	out << YAML::EndMap;
 
 	// We save our .todo file
@@ -75,7 +90,7 @@ void DataSerializer::Serialize(ImVec4* main_color, ImVec4 boxColor, size_t taske
 	fout << out.c_str();
 }
 
-void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& taskesyRows, int& taskesyColumns, std::vector<const char*>& columnNames, std::vector<const char*>& text, std::vector<int>& numberColumn, const std::string& filepath)
+void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& taskesyRows, int& taskesyColumns, std::vector<const char*>& columnNames, std::vector<const char*>& text, std::vector<bool>& completed, std::vector<int>& numberColumn, const std::string& filepath)
 {
 	std::ifstream stream(filepath);
 	std::stringstream strStream;
@@ -112,13 +127,19 @@ void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& task
 	if (!data["Box Text"])
 		return;
 
+	if (!data["Completed Boxes"])
+		return;
+
 	// If everything is fine, we load the table
 	while (!columnNames.empty())
 		columnNames.pop_back();
 	while (!numberColumn.empty())
 		numberColumn.pop_back();
 	while (!text.empty())
+	{
 		text.pop_back();
+		completed.pop_back();
+	}
 
 	std::string columnName;
 	int numCols;
@@ -139,11 +160,15 @@ void DataSerializer::Deserialize(ImVec4* main_color, ImVec4& boxColor, int& task
 		for (int column = 0; column < taskesyColumns; column++)
 		{
 			if (data["Box Text"][column * taskesyRows + row].as<std::string>() == "None")
+			{
 				text.push_back("None");
+				completed.push_back(false);
+			}
 			else
 			{
 				boxText = data["Box Text"][column * taskesyRows + row].as<std::string>();
 				text.push_back(_strdup(boxText.c_str()));
+				completed.push_back(data["Completed Boxes"][column * taskesyRows + row].as<bool>());
 			}
 		}
 	}

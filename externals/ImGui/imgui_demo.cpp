@@ -743,7 +743,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                                 // Box completion
                                 bool auxCompleted = completed[currentBox1];
                                 completed[currentBox1] = completed[currentBox2];
-                                completed[currentBox2] = aux;
+                                completed[currentBox2] = auxCompleted;
                             }
                             currentBox1 = -1;
                             currentBox2 = -1;
@@ -9254,18 +9254,18 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
                         currentColumn2 = column;
                         if (currentColumn1 != currentColumn2)
                         {
-                            std::vector<const char*> aux;
-                            std::vector<bool> auxCompleted;
+                            const char* aux;
+                            bool auxCompleted;
                             for (int j = 0; j < taskesyRows; j++)
                             {
-                                aux.push_back(text[j * taskesyColumns + currentColumn1]);
+                                aux = text[j * taskesyColumns + currentColumn1];
                                 text[j * taskesyColumns + currentColumn1] = text[j * taskesyColumns + currentColumn2];
-                                text[j * taskesyColumns + currentColumn2] = aux[j];
+                                text[j * taskesyColumns + currentColumn2] = aux;
 
                                 // Box completion
-                                auxCompleted.push_back(completed[j * taskesyColumns + currentColumn1]);
+                                auxCompleted = completed[j * taskesyColumns + currentColumn1];
                                 completed[j * taskesyColumns + currentColumn1] = completed[j * taskesyColumns + currentColumn2];
-                                completed[j * taskesyColumns + currentColumn2] = auxCompleted[j];
+                                completed[j * taskesyColumns + currentColumn2] = auxCompleted;
                             }
                         }
 

@@ -1,6 +1,7 @@
 Taskesy: true
-Main Color: [0.13945366, 0.13, 0.28, 1]
-Box Color: [0.5098705, 0.4, 0.8, 0.8]
+Menu Style: 2
+Main Color: [0.5511394, 0.55131066, 0.7309942, 1]
+Box Color: [0.4, 0.5398707, 0.8, 0.8]
 Rows: 4
 Columns: 4
 Column Names:
@@ -10,23 +11,40 @@ Column Names:
   - Column4
 Number of Boxes per Column:
   - 4
-  - 4
-  - 4
+  - 3
+  - 3
   - 4
 Box Text:
-  - Box1
+  - Box1 (Completed)
   - Box2
   - Box3
   - Box4
   - Box11
   - Box22
   - Box33
-  - Box44
+  - None
   - Box111
-  - Box222
+  - Box222 (Completed)
   - Box333
-  - Box444
+  - None
   - Box1111
   - Box2222
   - Box3333
-  - Box4444
+  - Box 4444 (Completed)
+Completed Boxes:
+  - true
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - true
+  - false
+  - false
+  - false
+  - false
+  - false
+  - true

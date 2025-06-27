@@ -444,6 +444,10 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
         ImGui::End();
     }
 
+    // FrameBorder - Not pleasant when exchanging boxes
+    //ImGuiStyle& style = ImGui::GetStyle();
+    //style.FrameBorderSize = 1.0f;
+
     // Exceptionally add an extra assert here for people confused about initial Dear ImGui setup
     // Most functions would normally just assert/crash if the context is missing.
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing Dear ImGui context. Refer to examples app!");

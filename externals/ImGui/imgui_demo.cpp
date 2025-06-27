@@ -606,6 +606,8 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                                 completed[row * taskesyColumns + currentColumn] = false;
                         }
                         ImGui::CloseCurrentPopup();
+                        currentColumn = -1;
+                        columnPopUp = false;
                     }
                     ImGui::EndPopup();
                 }
@@ -8985,11 +8987,10 @@ void ImGui::TaskesyAddColumn()
             {
                 text[row * (taskesyColumns - 1) + column + row] = strdup(text[row * (taskesyColumns - 1) + column]);
                 text[row * (taskesyColumns - 1) + column] = "None";
-
-                // Box completion
-                completed[row * (taskesyColumns - 1) + column + row] = completed[row * (taskesyColumns - 1) + column];
-                completed[row * (taskesyColumns - 1) + column] = false;
             }
+            // Box completion
+            completed[row * (taskesyColumns - 1) + column + row] = completed[row * (taskesyColumns - 1) + column];
+            completed[row * (taskesyColumns - 1) + column] = false;
         }
     }
 }
@@ -9012,11 +9013,11 @@ void ImGui::TaskesyDeleteColumn()
                 {
                     text[row * (taskesyColumns) + column] = strdup(text[row * (taskesyColumns) + column + row]);
                     text[row * (taskesyColumns) + column + row] = "None";
-
-                    // Box completion
-                    completed[row * (taskesyColumns)+column] = completed[row * (taskesyColumns)+column + row];
-                    completed[row * (taskesyColumns)+column + row] = false;
                 }
+
+                // Box completion
+                completed[row * (taskesyColumns)+column] = completed[row * (taskesyColumns)+column + row];
+                completed[row * (taskesyColumns)+column + row] = false;
             }
         }
 

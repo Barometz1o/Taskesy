@@ -581,7 +581,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                         strncpy(inputBuffer, noneText, sizeof(noneText));
                     }
                     ImGui::SameLine();
-                    if (ImGui::Button("Mark as Completed") || ImGui::IsKeyPressed(ImGuiKey_M)) {
+                    if (ImGui::Button("Mark as Completed") || (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_M))) {
                         bool alreadyMarked = true;
 
                         // We check if all the column is already completed
@@ -697,7 +697,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                                 strncpy(inputBuffer, noneText, sizeof(noneText));
                             }
                             ImGui::SameLine();
-                            if (ImGui::Button("Mark as Completed") || ImGui::IsKeyPressed(ImGuiKey_M)) {
+                            if (ImGui::Button("Mark as Completed") || (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_M))) {
                                 completed[ID] = !completed[ID];
                                 ImGui::CloseCurrentPopup();
                             }

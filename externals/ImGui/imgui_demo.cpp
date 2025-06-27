@@ -505,8 +505,11 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
 
     // Input buffer
     static char inputBuffer[1024] = "";
-    const char* noText = "No text";
-    const char* noneText = "";
+    //const char* noText = "No text";
+    //const char* noneText = "";
+
+    // Column
+    static char inputBufferColumns[256] = "";
 
     changeButtonColor();
 
@@ -556,29 +559,29 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
             if (currentColumn == column)
             {
                 ImGui::OpenPopup("Edit Text");
-                if (columnPopUp)
+                if (!columnPopUp)
                 {
-                    strncpy(inputBuffer, columnNames[column], sizeof(inputBuffer));
-                    columnPopUp = false;
+                    strncpy(inputBufferColumns, columnNames[column], sizeof(inputBufferColumns));
+                    columnPopUp = !columnPopUp;
                 }
                 if (ImGui::BeginPopup("Edit Text")) {
-                    ImGui::InputText("Input Text", inputBuffer, IM_ARRAYSIZE(inputBuffer));
+                    ImGui::InputText("Input Text", inputBufferColumns, IM_ARRAYSIZE(inputBufferColumns));
                     if (ImGui::Button("Accept") || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
-                        columnNames[currentColumn] = strdup(inputBuffer);
-                        if (!strcmp(columnNames[currentColumn], ""))
-                        {
-                            strncpy(inputBuffer, noText, sizeof(noText));
-                            columnNames[currentColumn] = strdup(inputBuffer);
-                        }
+                        columnNames[currentColumn] = strdup(inputBufferColumns);
+                        //if (!strcmp(columnNames[currentColumn], ""))
+                        if (std::string(columnNames[currentColumn]) != "")
+                            columnNames[currentColumn] = strdup(inputBufferColumns);
+                        else
+                            columnNames[currentColumn] = strdup("No Text");
                         ImGui::CloseCurrentPopup();
                         currentColumn = -1;
-                        strncpy(inputBuffer, noneText, sizeof(noneText));
+                        columnPopUp = false;
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("Cancel") || ImGui::IsKeyPressed(ImGuiKey_Escape)) {
                         ImGui::CloseCurrentPopup();
                         currentColumn = -1;
-                        strncpy(inputBuffer, noneText, sizeof(noneText));
+                        columnPopUp = false;
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("Mark as Completed") || (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_M))) {
@@ -664,7 +667,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                                 checkColumnBoxes();
                                 //numberColumn[*ptrCurrentBoxColumn] += 1; // BUG
                                 ImGui::CloseCurrentPopup();
-                                strncpy(inputBuffer, noneText, sizeof(noneText));
+                                //strncpy(inputBuffer, noneText, sizeof(noneText));
 
                                 /*
                                 if (ImGui::CalcTextSize(text[ID]).x > boxSizeX)
@@ -694,7 +697,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                             ImGui::SameLine();
                             if (ImGui::Button("Cancel") || ImGui::IsKeyPressed(ImGuiKey_Escape)) {
                                 ImGui::CloseCurrentPopup();
-                                strncpy(inputBuffer, noneText, sizeof(noneText));
+                                //strncpy(inputBuffer, noneText, sizeof(noneText));
                             }
                             ImGui::SameLine();
                             if (ImGui::Button("Mark as Completed") || (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_M))) {

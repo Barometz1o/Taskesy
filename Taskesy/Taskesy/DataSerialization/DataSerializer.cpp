@@ -108,6 +108,7 @@ void DataSerializer::Deserialize(int& menuStyle, ImVec4* main_color, ImVec4& box
 	if (!data["Menu Style"])
 		return;
 	menuStyle = data["Menu Style"].as<int>();
+
 	// Color
 	if (!data["Main Color"])
 		return;

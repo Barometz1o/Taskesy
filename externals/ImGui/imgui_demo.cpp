@@ -393,6 +393,7 @@ void changeButtonColor()
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 1.0f));                 // Border Color
 }
 
+/*
 void checkColumnBoxes()
 {
     for (int column = 0; column < taskesyColumns; column++)
@@ -400,13 +401,14 @@ void checkColumnBoxes()
         numberColumn[column] = 0;
         for (int row = 0; row < taskesyRows; row++)
         {
-            if (text[row * taskesyColumns + column] != "None")
+            if (std::string(text[row * taskesyColumns + column]) != "None")
                 numberColumn[column] += 1;
             else
                 break;
         }
     }
 }
+*/
 
 // Demonstrate most Dear ImGui features (this is big function!)
 // You may execute this function to experiment with the UI and understand what it does.
@@ -663,14 +665,21 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
 
                             ImGui::InputText("Input Text", inputBuffer, IM_ARRAYSIZE(inputBuffer));
                             if (ImGui::Button("Accept") || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
-                                std::string aux = inputBuffer;
-                                if (aux != "None")
+                                if (std::string(inputBuffer) != "None")
                                 {
+                                    // There is only one maximum "None" box per column
+                                    if (std::string(text[*ptrCurrentBoxID]) == "None")
+                                    {
+                                        numberColumn[*ptrCurrentBoxColumn] += 1;
+                                        showColumn[*ptrCurrentBoxColumn] = false;
+                                    }
                                     text[*ptrCurrentBoxID] = strdup(inputBuffer);
-                                    showColumn[*ptrCurrentBoxColumn] = false;
+
+                                    //if (std::string(text[numberColumn[column]]) == "None")
+                                    //showColumn[*ptrCurrentBoxColumn] = false;
                                 }
                                 // If we add a new box, we will be able to see its box
-                                checkColumnBoxes();
+                                //checkColumnBoxes();
                                 //numberColumn[*ptrCurrentBoxColumn] += 1; // BUG
                                 ImGui::CloseCurrentPopup();
                                 //strncpy(inputBuffer, noneText, sizeof(noneText));
@@ -8988,7 +8997,7 @@ void ImGui::TaskesyAddColumn()
     {
         for (int column = taskesyColumns-2; column >= 0; --column)
         {
-            if (text[row * (taskesyColumns - 1) + column] != "None")
+            if (std::string(text[row * (taskesyColumns - 1) + column]) != "None")
             {
                 text[row * (taskesyColumns - 1) + column + row] = strdup(text[row * (taskesyColumns - 1) + column]);
                 text[row * (taskesyColumns - 1) + column] = "None";

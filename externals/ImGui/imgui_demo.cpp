@@ -269,6 +269,7 @@ int currentBox2 = -1;
 // Column exchange
 int currentColumn1 = -1;
 int currentColumn2 = -1;
+bool exchangeColumn;
 
 // We save the filepath to save the file
 std::string filePath;
@@ -718,6 +719,29 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                             if (ImGui::Button("Mark as Completed") || (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_M))) {
                                 completed[ID] = !completed[ID];
                                 ImGui::CloseCurrentPopup();
+                            }
+
+                            // Delete a box
+                            if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_D))
+                            {
+                                if (std::string(text[ID]) != "None")
+                                    numberColumn[column] -= 1;
+
+                                text[ID] = "None";
+                                completed[ID] = false;
+                                const char* aux;
+                                bool auxBool;
+                                for (int j = row; j < taskesyRows - 1; ++j)
+                                {
+                                    aux = text[(j+1) * taskesyColumns + column];
+                                    text[(j+1) * taskesyColumns + column] = text[j * taskesyColumns + column];
+                                    text[j * taskesyColumns + column] = aux;
+
+                                    // Completed Boxes
+                                    auxBool = completed[(j + 1) * taskesyColumns + column];
+                                    completed[(j + 1) * taskesyColumns + column] = completed[j * taskesyColumns + column];
+                                    completed[j * taskesyColumns + column] = auxBool;
+                                }
                             }
                             ImGui::EndPopup();
                         }
@@ -9378,7 +9402,10 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
                 if (ImGui::MenuItem(columnNames[column]))
                 {
                     if (currentColumn1 == -1)
+                    {
                         currentColumn1 = column;
+                        exchangeColumn = true;
+                    }
                     else if (currentColumn2 == -1)
                     {
                         currentColumn2 = column;
@@ -9417,11 +9444,15 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
                     }
                 }
 
-
                 if (column != taskesyColumns - 1)
                     ImGui::Separator();
             }
             ImGui::EndMenu();
+        }
+
+        if (exchangeColumn) {
+            ImGui::OpenPopup("Exchange Columns");
+            exchangeColumn = false;
         }
 
         /*

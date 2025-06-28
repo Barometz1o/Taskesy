@@ -523,10 +523,13 @@ void setWindowIcon(GLFWwindow* window, const char* iconPath) {
         if (show_taskesy_window)
             ImGui::ShowTaskesyWindow(window, &show_taskesy_window, ptrCurrentBoxID, ptrCurrentBoxColumn, ptr_color);
 
+        // DEBUG
+        /*
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
-        
+        */
+
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         /*
         bool show_another_window = true;

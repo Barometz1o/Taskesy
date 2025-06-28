@@ -241,8 +241,8 @@ Index of this file:
 int taskesyColumns = 1;
 int taskesyRows = 3;
 size_t ID;
-std::vector<bool> showColumn;                               // Initializing false
-std::vector<int> numberColumn(taskesyColumns, 0);           // Counting filled boxes per column and Resize boxes per column vector
+std::vector<bool> showColumn;
+std::vector<int> numberColumn;           // Counting filled boxes per column and Resize boxes per column vector
 
 // Column Names
 std::vector<const char*> columnNames;
@@ -479,7 +479,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
     ImVec2 boxSize(boxSizeX, boxSizeY);
 
     // Resize bool column vector
-    showColumn.resize(taskesyColumns);
+    //showColumn.resize(taskesyColumns);
 
     // To draw on main
     //ImGui::Text("Taskesy");
@@ -623,7 +623,7 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
             {
                 // We draw the box if it has text or if it is empty but we want a box from the menu
                 //if (text[row * taskesyColumns + column] != "None" || text[row * taskesyColumns + column] == "None" && showColumn[column] == true && row == numberColumn[column])
-                if ((text[row * taskesyColumns + column] != "None") || (showColumn[column] && row == numberColumn[column]))
+                if ((std::string(text[row * taskesyColumns + column]) != "None") || (showColumn[column] && row == numberColumn[column]))
                 {
                     ID = row * taskesyColumns + column;
                     ImGui::PushID(ID);
@@ -8977,6 +8977,7 @@ void ImGui::TaskesyAddColumn()
             columnName = "Column Name " + std::to_string(taskesyColumns - 1);
             columnNames.push_back(strdup(columnName.c_str()));
             numberColumn.push_back(0);
+            showColumn.push_back(false);
         }
         text.push_back("None");
         completed.push_back(false);
@@ -9006,6 +9007,7 @@ void ImGui::TaskesyDeleteColumn()
     {
         columnNames.pop_back();
         numberColumn.pop_back();
+        showColumn.pop_back();
         taskesyColumns--;
 
         // If you delete a column, the boxes' index change, so we have to sort them
@@ -9013,11 +9015,12 @@ void ImGui::TaskesyDeleteColumn()
         {
             for (int column = 0; column < taskesyColumns; ++column)
             {
-                if (text[row * (taskesyColumns) + column + row] != "None")
-                {
-                    text[row * (taskesyColumns) + column] = strdup(text[row * (taskesyColumns) + column + row]);
+                //if (text[row * (taskesyColumns) + column + row] != "None")
+                //{
+                text[row * (taskesyColumns) + column] = strdup(text[row * (taskesyColumns) + column + row]);
+                if (std::string(text[row * (taskesyColumns)+column + row]) != "None")
                     text[row * (taskesyColumns) + column + row] = "None";
-                }
+                //}
 
                 // Box completion
                 completed[row * (taskesyColumns)+column] = completed[row * (taskesyColumns)+column + row];
@@ -9052,7 +9055,7 @@ void ImGui::TaskesyDeleteRow()
         // If we delete a row, we have to make sure that if we delete a correct box, we have to modify "numberColumn"
         for (int column = 0; column < taskesyColumns; ++column)
         {
-            if (text[taskesyRows * taskesyColumns + column] != "None")
+            if (std::string(text[taskesyRows * taskesyColumns + column]) != "None")
             {
                 numberColumn[column] -= 1;
             }
@@ -9387,9 +9390,19 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
                             }
                         }
 
+                        // Set up Column Properties
                         const char* aux = columnNames[currentColumn1];
                         columnNames[currentColumn1] = columnNames[currentColumn2];
                         columnNames[currentColumn2] = aux;
+
+                        bool auxBool = showColumn[currentColumn1];
+                        showColumn[currentColumn1] = showColumn[currentColumn2];
+                        showColumn[currentColumn2] = auxBool;
+
+                        int auxInt = numberColumn[currentColumn1];
+                        numberColumn[currentColumn1] = numberColumn[currentColumn2];
+                        numberColumn[currentColumn2] = auxInt;
+
                         currentColumn1 = -1;
                         currentColumn2 = -1;
                     }

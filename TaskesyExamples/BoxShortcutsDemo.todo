@@ -1,0 +1,50 @@
+Taskesy: true
+Menu Style: 0
+Main Color: [0.13746826, 0.13, 0.28, 1]
+Box Color: [0.5628519, 0.4, 0.8, 0.8]
+Rows: 9
+Columns: 2
+Column Names:
+  - Box Shortcuts
+  - Columns - Mark all the boxes as completed
+Number of Boxes per Column:
+  - 9
+  - 6
+Box Text:
+  - LeftCtrl + M with the pop-up of this box opened to mark this box as completed!
+  - Press Enter to instantly save the text you enter!
+  - Right-Click me to move me to Box1!
+  - "Box1: Right-Click me again!"
+  - LeftCtrl + D with the pop-up of this box opened to delete this box!
+  - Open this pop-up and keep pressing LeftCtrl + D to delete the boxes below.
+  - Delete Me!
+  - Delete Me!
+  - Delete Me!
+  - If you don't see the text below, press Left-Click to read all of its content.
+  - Mark as completed all the boxes in this column pressing LeftCtrl + M with a column pop-up, opened from "Edit Column Names".
+  - Mark me as completed!
+  - Mark me as completed!
+  - Mark me as completed!
+  - Mark me as completed!
+  - None
+  - None
+  - None
+Completed Boxes:
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false
+  - false

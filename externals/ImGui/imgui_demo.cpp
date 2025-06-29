@@ -747,12 +747,15 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                         }
                     }
 
+                    // Exchange Boxes
                     if (currentBox1 != -1 && ID == currentBox1)
                     {
                         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4((*ptrColor).x, (*ptrColor).y, (*ptrColor).z, 0.8f));                 // Normal Color
                         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4((*ptrColor).x, (*ptrColor).y, (*ptrColor).z, 0.9f));          // If hovered
                         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4((*ptrColor).x, (*ptrColor).y, (*ptrColor).z, 1.0f));           // On Click
                     }
+
+                    // Completed Boxes
                     else if (completed[ID])
                     {
                         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 0.4f));         // Normal Color
@@ -762,8 +765,10 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
 
                     ImGui::Button(text[ID], boxSize); // To change?
 
+                    // Exchange Boxes
                     if (currentBox1 != -1 && ID == currentBox1)
                         ImGui::PopStyleColor(3);
+                    // Completed Boxes
                     else if (completed[ID])
                         ImGui::PopStyleColor(3);
 
@@ -798,62 +803,15 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                         }
                     }
 
-                    // Drag and Drop
-
-                    /*
-                    // Our buttons are both drag sources and drag targets here!
-                    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
-                    {
-                        // Set payload to carry the index of our item (could be anything)
-                        ImGui::SetDragDropPayload("DND_DEMO_CELL", &row, sizeof(int));
-
-                        // Display preview (could be anything, e.g. when dragging an image we could decide to display
-                        // the filename and a small preview of the image, etc.)
-                        
-                        // TODO
-                        //if (mode == Mode_Copy) { ImGui::Text("Copy %s", text[ID]); }
-                        //if (mode == Mode_Move) { ImGui::Text("Move %s", text[ID]); }
-                        if (mode == Mode_Swap) { ImGui::Text("Swap %s", text[ID]); }
-                        ImGui::EndDragDropSource();
-                    }
-                    if (ImGui::BeginDragDropTarget())
-                    {
-                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
-                        {
-                            IM_ASSERT(payload->DataSize == sizeof(int));
-                            int payload_n = *(const int*)payload->Data;
-
-                            // TODO
-                            */
-                            /*
-                            if (mode == Mode_Copy)
-                            {
-                                text[ID] = text[payload_n];
-                            }
-                            if (mode == Mode_Move)
-                            {
-                                text[ID] = text[payload_n];
-                                text[payload_n] = "";
-                            }
-                            */
-                            /*
-                            if (mode == Mode_Swap)
-                            {
-                                const char* tmp = text[ID];
-                                text[ID] = text[payload_n];
-                                text[payload_n] = tmp;
-                            }
-                        }
-                        ImGui::EndDragDropTarget();
-                    }
-                    */
                     ImGui::PopID();
                 }
             }
         }
         ImGui::EndTable();
     }
+    // Button Color
     ImGui::PopStyleColor(7);
+
     ImGui::End();
 }
 

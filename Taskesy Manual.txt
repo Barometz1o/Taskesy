@@ -1,0 +1,84 @@
+Thank you for using Taskesy!
+This is a solo project made entirely by Raúl Velázquez Gómez.
+https://github.com/Barometz1o/Taskesy
+
+- Main menu bar:
+
+* File:
+On the File Menu, you can change various aspects of the application's style; you can change the background color, the color of the boxes, and the menu style of the application (Dark, Light and Classic).
+Moreover, you can create new files as well as opening or saving Taskesy files.
+Remember that you don't need to save the file with the ".todo" extension; it is automatically done (you can only read and save files with this format).
+
+You can try opening the example file in your Taskesy's download folder, located in the "Example" folder, to see some of the application features.
+
+* Edit Column Names:
+You can click on this menu to see all the columns of your Taskesy file.
+Click again on the name of an existing column to see a pop-up.
+In this pop-up, you will be able to change the name or mark all the boxes of the column as completed (this is a box property that I will discuss later in the manual).
+Remember that you can only mark as completed a column with its current rows, if you create a new row and add a box, it won't be marked as completed.
+
+* Exchange Columns:
+You can click on this menu to see all the columns of your Taskesy file.
+You can click on an existing column; you can then select another column to exchange these columns.
+Make sure not to select the same column, because you won't exchange it.
+
+* Add Box:
+This is one of the most important options in Taskesy.
+You can click on this menu to see all the columns of your Taskesy file.
+You can click on an existing column, then a "None" box will appear on that column.
+Remember that if there's already a "None" box in that column, you won't be able to add another one. - Check the "Boxes" section to know more about box properties.
+
+* Add Column:
+You can click on this button to add one more column to your Taskesy file.
+
+* Add Row
+You can click on this button to add one more row to your Taskesy file.
+
+* Delete:
+On the Delete Menu, you can click to see the available options.
+Click on the "Delete Column" button to delete the last column; remember that you will lose all the boxes contained in that column.
+Click on the "Delete Row" button to delete the last row; remember that you will lose all the boxes contained on that row.
+
+* Credits:
+You can see the credits of the application.
+
+* Performance:
+To the right of the "Credits" menu, you can see the application's performance.
+
+- Boxes:
+
+* "None" Boxes:
+This type of boxes behave like they are empty; this means you can't add more boxes to the same column, exchange this box, or save it in a file; you can't delete it individually either.
+You can only mark it as completed.
+
+* Non-empty Boxes:
+Once you enter text on a "None" box, it becomes non-empty, and you can mark the box as completed, exchange it with other non-empty boxes, and read and save them into Taskesy files.
+Once a box is non-empty, it can't be a "None" box again (you can still delete a non-empty box).
+
+* General:
+Right-click on a box to start an exchange with another non-empty box. Right-click on the first one and repeat the same to the one you want to do the exchange.
+Left-click on a box to open its pop-up. You can read all the text it contains on the pop-up. You can change the box text or mark the box as completed.
+
+- Shortcuts (File):
+
+* Fullscreen - borderless: LeftAlt + Enter (you can do it again to return to a normal window)
+* Exit: LeftCtrl + W
+* New File: LeftCtrl + N
+* Open File: LeftCtrl + O
+* Save File: LeftCtrl + S
+* Save File As...: LeftCtrl + LeftAlt + S
+* Background Color: LeftCtrl + G
+* Box Color: LeftCtrl + B
+
+- Shortcuts (Box pop-up):
+
+* Confirm Text (Accept): Enter
+* Cancel Text (Cancel): Esc
+* Mark as Completed: LeftCtrl + M
+* Delete Box: Ctrl + D
+
+- Shortcuts (Column pop-up):
+
+* Confirm Text (Accept): Enter
+* Cancel Text (Cancel): Esc
+* Mark as Completed (You mark all the boxes in a column as completed): LeftCtrl + M

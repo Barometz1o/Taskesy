@@ -384,8 +384,6 @@ void changeButtonColor()
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 0.9f));          // If hovered
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 1.0f));           // On Click
 
-    //ImGui::PushStyleColor(ImGuiCol_Text, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 1.0f));                   // Text Color
-
     // Headers
     ImGui::PushStyleColor(ImGuiCol_Header, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 1.0f));                 // Normal Color
     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 1.0f));          // If hovered
@@ -394,6 +392,7 @@ void changeButtonColor()
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 1.0f));                 // Border Color
 }
 
+// Old checking system
 /*
 void checkColumnBoxes()
 {
@@ -433,10 +432,6 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
     bool changedColor = false;
     if (boxColorWindow)
     {
-        // If we have previously modified the color
-        //if (changedColor)
-            //ImGui::PopStyleColor(3);
-
         // Color Pop Up
         ImGui::Begin("Box Color", nullptr, ImGuiWindowFlags_NoTitleBar);
         ImGui::ColorEdit3("Box Color", (float*)ptrBoxColor);
@@ -446,10 +441,6 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
         }
         ImGui::End();
     }
-
-    // FrameBorder - Not pleasant when exchanging boxes
-    //ImGuiStyle& style = ImGui::GetStyle();
-    //style.FrameBorderSize = 1.0f;
 
     // Exceptionally add an extra assert here for people confused about initial Dear ImGui setup
     // Most functions would normally just assert/crash if the context is missing.
@@ -481,41 +472,13 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
     int boxSizeY = y_coord / (taskesyRows + 0.19f);
     ImVec2 boxSize(boxSizeX, boxSizeY);
 
-    // Resize bool column vector
-    //showColumn.resize(taskesyColumns);
-
-    // To draw on main
-    //ImGui::Text("Taskesy");
-
-    // Display box mode (swap, move and copy)
-    /*
-    enum Mode
-    {
-        Mode_Swap,
-        Mode_Move,
-        Mode_Copy
-    };
-    static int mode = 0;
-    */
-    // TODO
-    /*
-    if (ImGui::RadioButton("Swap", mode == Mode_Swap)) { mode = Mode_Swap; } ImGui::SameLine();
-    if (ImGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } ImGui::SameLine();
-    if (ImGui::RadioButton("Copy", mode == Mode_Copy)) { mode = Mode_Copy; }
-    */
-
-    // Make the UI compact because there are so many fields
-    // In my case does not work due to the rendering window.
-
     // Flags to create the table
     static ImGuiTableFlags flags;// = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV;
 
-    // Input buffer
+    // Input buffer - Text
     static char inputBuffer[1024] = "";
-    //const char* noText = "No text";
-    //const char* noneText = "";
 
-    // Column
+    // Input buffer - Column
     static char inputBufferColumns[256] = "";
 
     changeButtonColor();
@@ -537,31 +500,6 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
 
             ImGui::TableSetColumnIndex(column);
 
-            /*
-            // If we press the button with left click we will trigger the exchange columns option
-            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-                if (currentColumn1 == -1)
-                    currentColumn1 = column;
-                else if (currentColumn2 == -1)
-                {
-                    currentColumn2 = column;
-                    if (currentColumn1 != currentColumn2)
-                    {
-                        std::vector<const char*> aux;
-
-                        for (int j = 0; j < taskesyRows; j++)
-                        {
-                            aux.push_back(text[j * taskesyColumns + currentColumn1]);
-                            text[j * taskesyColumns + currentColumn1] = text[j * taskesyColumns + currentColumn2];
-                            text[j * taskesyColumns + currentColumn2] = aux[j];
-                        }
-                    }
-                    currentColumn1 = -1;
-                    currentColumn2 = -1;
-                }
-            }
-            */
-
             // We create a pop up
             if (currentColumn == column)
             {
@@ -572,10 +510,10 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                     columnPopUp = !columnPopUp;
                 }
                 if (ImGui::BeginPopup("Edit Text")) {
+                    // Input text
                     ImGui::InputText("Input Text", inputBufferColumns, IM_ARRAYSIZE(inputBufferColumns));
                     if (ImGui::Button("Accept") || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
                         columnNames[currentColumn] = strdup(inputBufferColumns);
-                        //if (!strcmp(columnNames[currentColumn], ""))
                         if (std::string(columnNames[currentColumn]) != "")
                             columnNames[currentColumn] = strdup(inputBufferColumns);
                         else
@@ -584,12 +522,14 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                         currentColumn = -1;
                         columnPopUp = false;
                     }
+                    // Cancel
                     ImGui::SameLine();
                     if (ImGui::Button("Cancel") || ImGui::IsKeyPressed(ImGuiKey_Escape)) {
                         ImGui::CloseCurrentPopup();
                         currentColumn = -1;
                         columnPopUp = false;
                     }
+                    // Mark as completed
                     ImGui::SameLine();
                     if (ImGui::Button("Mark as Completed") || (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_M))) {
                         bool alreadyMarked = true;
@@ -620,12 +560,9 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                 }
             }
 
-            // ImGui::Text("Hello %d", column/*, row */); // Debug
-
             for (int row = 0; row < taskesyRows; row++)
             {
-                // We draw the box if it has text or if it is empty but we want a box from the menu
-                //if (text[row * taskesyColumns + column] != "None" || text[row * taskesyColumns + column] == "None" && showColumn[column] == true && row == numberColumn[column])
+                // We draw the box if it has text or if it is empty (new box)
                 if ((std::string(text[row * taskesyColumns + column]) != "None") || (showColumn[column] && row == numberColumn[column]))
                 {
                     ID = row * taskesyColumns + column;
@@ -638,6 +575,8 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                             std::string line = text[ID];
                             std::string lineAux;
                             size_t i = 0;
+
+                            // Show the text of the button
                             while (!line.empty())
                             {
                                 lineAux += line.front();
@@ -649,72 +588,32 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                                     i = 0;
                                 }
                             }
-                            /*
-                            for (size_t i = 0; i < lineToPrint.size(); ++i)
-                            {
-                                ImGui::Text(lineToPrint[i].c_str());
-                            }
-                            */
-                            //if (lineToPrint.size() == 0)
                             ImGui::Text(lineAux.c_str());
-                            /*else {
-                                for (size_t i = 0; i < lineToPrint.size(); ++i)
-                                {
-                                    ImGui::Text(lineToPrint[i]);
-                                }
-                            }*/
 
+                            // Input text
                             ImGui::InputText("Input Text", inputBuffer, IM_ARRAYSIZE(inputBuffer));
                             if (ImGui::Button("Accept") || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
                                 if (std::string(inputBuffer) != "None")
                                 {
-                                    // There is only one maximum "None" box per column
+                                    // There is only one maximum "None" box per column and it has to be the last one
                                     if (std::string(text[*ptrCurrentBoxID]) == "None")
                                     {
                                         numberColumn[*ptrCurrentBoxColumn] += 1;
                                         showColumn[*ptrCurrentBoxColumn] = false;
                                     }
                                     text[*ptrCurrentBoxID] = strdup(inputBuffer);
-
-                                    //if (std::string(text[numberColumn[column]]) == "None")
-                                    //showColumn[*ptrCurrentBoxColumn] = false;
                                 }
-                                // If we add a new box, we will be able to see its box
-                                //checkColumnBoxes();
-                                //numberColumn[*ptrCurrentBoxColumn] += 1; // BUG
+
                                 ImGui::CloseCurrentPopup();
-                                //strncpy(inputBuffer, noneText, sizeof(noneText));
-
-                                /*
-                                if (ImGui::CalcTextSize(text[ID]).x > boxSizeX)
-                                {
-                                    bool finished = false;
-                                    std::string line;
-                                    std::string overflowingText = text[ID];
-                                    while (!finished)
-                                    {
-                                        while (ImGui::CalcTextSize(line.c_str()).x != boxSizeX && !overflowingText.empty())
-                                        {
-                                            line += overflowingText.front();
-                                            overflowingText.erase(0, 1);
-                                        }
-
-                                        if (CalcTextSize(line.c_str()).x == boxSizeX)
-                                            text[ID] = strdup((line + "\n").c_str());
-                                        else
-                                            finished = true;
-
-                                        line = text[ID];
-                                    }
-                                }
-                                */
                             }
 
+                            // Cancel
                             ImGui::SameLine();
                             if (ImGui::Button("Cancel") || ImGui::IsKeyPressed(ImGuiKey_Escape)) {
                                 ImGui::CloseCurrentPopup();
-                                //strncpy(inputBuffer, noneText, sizeof(noneText));
                             }
+
+                            // Mark as completed
                             ImGui::SameLine();
                             if (ImGui::Button("Mark as Completed") || (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_M))) {
                                 completed[ID] = !completed[ID];
@@ -747,6 +646,8 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                         }
                     }
 
+                    // Box styles
+                    
                     // Exchange Boxes
                     if (currentBox1 != -1 && ID == currentBox1)
                     {
@@ -763,7 +664,8 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
                         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4((*ptrBoxColor).x, (*ptrBoxColor).y, (*ptrBoxColor).z, 0.6f));   // On Click
                     }
 
-                    ImGui::Button(text[ID], boxSize); // To change?
+                    // We draw the boxes
+                    ImGui::Button(text[ID], boxSize);
 
                     // Exchange Boxes
                     if (currentBox1 != -1 && ID == currentBox1)
@@ -8993,7 +8895,6 @@ void ImGui::TaskesyAddColumn()
 
 void ImGui::TaskesyDeleteColumn()
 {
-    
     if (taskesyColumns > 1)
     {
         columnNames.pop_back();
@@ -9006,12 +8907,9 @@ void ImGui::TaskesyDeleteColumn()
         {
             for (int column = 0; column < taskesyColumns; ++column)
             {
-                //if (text[row * (taskesyColumns) + column + row] != "None")
-                //{
                 text[row * (taskesyColumns) + column] = strdup(text[row * (taskesyColumns) + column + row]);
                 if (std::string(text[row * (taskesyColumns)+column + row]) != "None")
                     text[row * (taskesyColumns) + column + row] = "None";
-                //}
 
                 // Box completion
                 completed[row * (taskesyColumns)+column] = completed[row * (taskesyColumns)+column + row];
@@ -9099,14 +8997,17 @@ void newFile()
         numberColumn.pop_back();
     }
 
+    // We create the columns
     for (size_t i = 0; i < taskesyColumns; ++i)
     {
         ImGui::TaskesyAddColumn();
     }
 
+    // Column properties set up
     showColumn.resize(taskesyColumns, false);
     numberColumn.resize(taskesyColumns, 0);
 
+    // Box cleaning and set up
     while (!text.empty())
     {
         text.pop_back();
@@ -9139,13 +9040,8 @@ void openFile(GLFWwindow* window)
     {
         filePath = filePathAux;
         // Clean values to not get unexpected results
-        //while (!columnNames.empty())
         while (!showColumn.empty())
-        {
-            //columnNames.pop_back();
             showColumn.pop_back();
-            //numberColumn.pop_back();
-        }
 
         while (!text.empty())
         {
@@ -9332,14 +9228,6 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
 
             ImGui::EndMenu();
         }
-        
-        /*
-        if (ImGui::BeginMenu("File"))
-        {
-            ShowExampleMenuFile();
-            ImGui::EndMenu();
-        }
-        */
 
         if (ImGui::BeginMenu("Edit Column Names"))
         {
@@ -9413,19 +9301,6 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
             exchangeColumn = false;
         }
 
-        /*
-        if (ImGui::BeginMenu("Edit"))
-        {
-            if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-            if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {} // Disabled item
-            ImGui::Separator();
-            if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-            if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-            if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-            ImGui::EndMenu();
-        }
-        */
-
         // Add Box
         if (ImGui::BeginMenu("Add Box"))
         {
@@ -9486,20 +9361,8 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
             ImGui::EndMenu();
         }
 
-        // Performance
-            // Performance Menu
-        /*
-        if (ImGui::BeginMenu("Performance"))
-        {
-            ImGuiIO& io = ImGui::GetIO(); (void)io;
-            io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-            io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            ImGui::EndMenu();
-        }
-        */
         ImGui::Text(" ");
-            // Real Time Performance Visualization
+        // Real Time Performance Visualization
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -9510,6 +9373,8 @@ static void ShowExampleAppMainMenuBar(GLFWwindow* window)
     }
 
     // Shortcuts
+
+    // Fullscreen
     if (ImGui::IsKeyDown(ImGuiKey_LeftAlt) && ImGui::IsKeyPressed(ImGuiKey_Enter)) {
         fullscreen = !fullscreen;
         if (fullscreen)

@@ -468,8 +468,8 @@ void ImGui::ShowTaskesyWindow(GLFWwindow* window, bool* p_open, int* ptrCurrentB
     ShowExampleAppMainMenuBar(window);
 
     // Before drawing
-    int boxSizeX = x_coord / (taskesyColumns + 0.19);
-    int boxSizeY = y_coord / (taskesyRows + 0.19f);
+    int boxSizeX = x_coord / taskesyColumns;
+    int boxSizeY = y_coord / taskesyRows;
     ImVec2 boxSize(boxSizeX, boxSizeY);
 
     // Flags to create the table

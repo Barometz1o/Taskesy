@@ -5,11 +5,11 @@
 ---
 ### Some screenshots of Taskesy:
 ---
-### Box Shortcuts Demo Screenshot:
-![Box Shortcuts Demo Screenshot](https://github.com/Barometz1o/Taskesy/blob/03d7d41e24c5a49ef92140cc4a0ebd7d0975c622/TaskesyScreenshots/BoxShortcutsDemo_Screenshot.png)
+### Taskesy Example Screenshot:
+![Taskesy Example Screenshot](https://github.com/Barometz1o/Taskesy/blob/ad7cd75ee90a25371a95db552e8090d2018d07ec/TaskesyScreenshots/TaskesyExampleFile_Screenshot.png)
 
 ---
-### Taskesy Example Screenshot:
-![Taskesy Example Screenshot](https://github.com/Barometz1o/Taskesy/blob/03d7d41e24c5a49ef92140cc4a0ebd7d0975c622/TaskesyScreenshots/TaskesyExampleFile_Screenshot.png)
+### Box Shortcuts Demo Screenshot:
+![Box Shortcuts Demo Screenshot](https://github.com/Barometz1o/Taskesy/blob/ad7cd75ee90a25371a95db552e8090d2018d07ec/TaskesyScreenshots/BoxShortcutsDemo_Screenshot.png)
 
 ---
